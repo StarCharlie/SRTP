@@ -1,0 +1,66 @@
+{% extends "basic.html" %}
+
+{% block title %}主界面{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid" style="background:#D2DEDC">
+    <div class="container pt-5">
+        <div class="row justify-content-around">
+            <div class="card text-white bg-info mb-3" style="max-width: 40rem;">
+                <div class="card-header">穴位名称</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.mingcheng }}</p>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" style="max-width: 40rem;">
+                <div class="card-header">位置</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.weizhi }}</p>
+                </div>
+            </div>
+
+            <div class="card text-white bg-info mb-3" style="max-width: 40rem;">
+                <div class="card-header">功效</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.gongxiao }}</p>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" style="max-width: 40rem;">
+                <div class="card-header">主治</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.zhuzhi }}</p>
+                </div>
+            </div>
+
+            <div class="card text-white bg-info mb-3" style="max-width: 40rem;">
+                <div class="card-header">方例</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.fangli }}</p>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" style="max-width: 40rem;">
+                <div class="card-header">刺灸法</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.cijiufa }}</p>
+                </div>
+            </div>
+
+            <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+                <div class="card-header">其他</div>
+                <div class="card-body">
+                  <p class="card-text">{{ tag.qita }}</p>
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
