@@ -128,7 +128,7 @@ export default {
           this.message("warning", "请修改正确的数据格式！");
           return;
         } else {
-          this.$http.post("/RegisterView", this.registerForm).then((red) => {
+          this.$http.post("/user/RegisterView", this.registerForm).then((red) => {
             if (red.data["message"] == "success") {
               this.$router.push("/login");
             } else {

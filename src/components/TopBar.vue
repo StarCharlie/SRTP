@@ -11,23 +11,25 @@
     >
     <!-- 用户端 -->
       <div class="flex-grow" />
-      <el-menu-item>
+      <el-sub-menu index="2">
+        <template #title>用户中心</template>
+        <el-menu-item>
           <div v-if="this.$cookies.get('name') != null">
             <span @click="toInfor()"><strong>{{ "欢迎您：" + this.$cookies.get('name')}}</strong></span>
           </div>
           <div v-else>
             <span @click="toInfor()"><strong>登录</strong></span>
           </div>
-      </el-menu-item>
-
-      <el-menu-item>
-          <div v-if="this.$cookies.get('name') != null">
-            <span @click="removeCookie()"><strong>注销</strong></span>
-          </div>
-          <div v-else>
-            <span @click="removeCookie()"><strong>注册</strong></span>
-          </div>
-      </el-menu-item>
+        </el-menu-item>
+        <el-menu-item>
+            <div v-if="this.$cookies.get('name') != null">
+              <span @click="removeCookie()"><strong>注销</strong></span>
+            </div>
+            <div v-else>
+              <span @click="removeCookie()"><strong>注册</strong></span>
+            </div>
+        </el-menu-item>
+      </el-sub-menu>
     </el-menu>
 
     <div style="background:#EDEBEB;">
@@ -60,7 +62,6 @@
       <el-menu-item index="/"> 主页 </el-menu-item>
       <el-menu-item index="/search"> 关键词搜索 </el-menu-item>
       <el-menu-item index="/compare"> 知识图谱 </el-menu-item>
-      <el-menu-item v-if=enter_user index="/main"> 用户中心 </el-menu-item>
       <el-menu-item index="/statistics"> 3D人体查看 </el-menu-item>
     </el-menu>
   </template>

@@ -65,7 +65,7 @@
 
     methods: {
       login(){
-        this.$http.post('/LoginView',this.loginForm).then(red=>{
+        this.$http.post('/user/LoginView',this.loginForm).then(red=>{
           if(red.data['message'] == "success"){
             this.$cookies.set("name", this.loginForm['username'], {expires: "1D"});
             this.$router.push("/");
