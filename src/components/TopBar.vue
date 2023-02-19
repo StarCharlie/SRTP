@@ -61,7 +61,7 @@
     >
       <el-menu-item index="/"> 主页 </el-menu-item>
       <el-menu-item index="/search"> 关键词搜索 </el-menu-item>
-      <el-menu-item index="/compare"> 知识图谱 </el-menu-item>
+      <el-menu-item index="/graph"> 知识图谱 </el-menu-item>
       <el-menu-item index="/statistics"> 3D人体查看 </el-menu-item>
     </el-menu>
   </template>
@@ -87,7 +87,7 @@
         // 登录/进入用户界面
         toInfor(){
           if(this.$cookies.get('name') == null) this.$router.push("/login");
-          else this.$router.push("/main");
+          else this.$router.push("/user");
         },
         // 注册/注销
         removeCookie(){
