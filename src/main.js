@@ -9,7 +9,6 @@ import VueCookies from 'vue-cookies'
 import * as echarts from "echarts"
 
 
-
 const app = createApp(App)
 
 axios.defaults.baseURL = "http://127.0.0.1:5000"

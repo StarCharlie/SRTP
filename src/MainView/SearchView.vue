@@ -69,9 +69,9 @@ import { Search } from '@element-plus/icons-vue'
         data: null,
         showResult: false,
         favor: {
-              id: "",
-              user_name: "",
-            },
+            id: "",
+            user_name: "",
+          },
         }
     },
     created(){

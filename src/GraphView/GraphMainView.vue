@@ -1,7 +1,7 @@
 <!-- 侧边栏 -->
 <template>
   <div style="background-color: aliceblue;">
-    <el-container style="height: 700px;">
+    <el-container style="height: 800px;">
       <el-aside width="200px">
         <el-menu default-active = "1-1"
         background-color = aliceblue
