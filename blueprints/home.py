@@ -93,12 +93,10 @@ def search_words():
 
     es = ElasticSearch(index_name="xuewei_infor", index_type="test-type")
     data = es.search(keyword)
-    print(data)
     address_data = data["hits"]["hits"]
     address_list = []
     for item in address_data:
         address_list.append(item["_source"])
-    print(address_list)
 
     return Result.success(address_list)
 
