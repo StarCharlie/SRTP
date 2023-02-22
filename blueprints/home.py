@@ -90,6 +90,7 @@ def search_words():
 
     key_word = search_word
     keyword = str(key_word)
+
     es = ElasticSearch(index_name="xuewei_infor", index_type="test-type")
     data = es.search(keyword)
     print(data)
@@ -100,3 +101,12 @@ def search_words():
     print(address_list)
 
     return Result.success(address_list)
+
+
+@bp.route("/createES")
+def search_test():
+    try:
+        create_es_data()
+        return "create OK"
+    except Exception as e:
+        return "Error" + str(e)

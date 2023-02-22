@@ -8,10 +8,11 @@ import numpy as np
 import pandas as pd
 import py2neo
 from py2neo import Node, Relationship
+from config import NEO4j_NAME, NEO4j_PASS, NEO4j_GRAPH
 
 # database connection
 
-graph = py2neo.Graph('http://localhost:7474', auth=('neo4j', 'syt20010907'), name="neo4j")
+graph = py2neo.Graph('http://localhost:7474', auth=(NEO4j_NAME, NEO4j_PASS), name=NEO4j_GRAPH)
 file_path = 'static/datas/艾灸.xls'
 relation_path = 'static/datas/病症穴位.xls'
 max_count_test = 50
@@ -70,8 +71,9 @@ def test():
 # generated
 if __name__ == '__main__':
     # delete all existing data
-    # graph.delete_all()
-    # create_bingzheng_graph()
-    # create_xuewei_graph()
-    # create_disease_xuewei_relation()
+    graph.delete_all()
+    # generating
+    create_bingzheng_graph()
+    create_xuewei_graph()
+    create_disease_xuewei_relation()
     print("create over")
