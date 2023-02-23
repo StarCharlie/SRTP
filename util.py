@@ -4,16 +4,12 @@ from flask import jsonify
 class Result:
     @staticmethod
     def error(code, message):
-        result = {}
-        result["code"] = str(code)
-        result["message"] = str(message)
+        result = {"code": str(code), "message": str(message)}
         return jsonify(result)
 
     @staticmethod
     def success(data):
-        result = {}
-        result["code"] = "0"
-        result["message"] = "success"
+        result = {"code": "0", "message": "success"}
         if isinstance(data, bytes):
             result["data"] = str(data, 'utf-8')
         else:
@@ -21,16 +17,14 @@ class Result:
         return jsonify(result)
 
     @staticmethod
-    def success_similar(data, similar):
-        result = {}
-        result["code"] = "0"
-        result["message"] = "success"
+    def success_search(data, total_number):
+        result = {"code": "0", "message": "success"}
         if isinstance(data, bytes):
             result["data"] = str(data, 'utf-8')
         else:
             result["data"] = data
         if isinstance(data, bytes):
-            result["similarity"] = str(similar, 'utf-8')
+            result["totalNumber"] = str(total_number, 'utf-8')
         else:
-            result["similarity"] = similar
+            result["totalNumber"] = total_number
         return jsonify(result)

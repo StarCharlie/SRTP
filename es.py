@@ -14,39 +14,27 @@ class ElasticSearch:
         self.index_name = index_name
         self.index_type = index_type
 
-    #
-    # def search_key_thesis(self, query, count: int = 10):
+    # 关键词模糊查询 + 分页机制
+    # def search(self, query: str, page_number: int = 0, page_size: int = 10, max_size: int = 100):
     #     ds1 = {
-    #         "_source": {
-    #             "includes": ["keywords"]
-    #         },
+    #         "min_score": 5.0,
     #         "query": {
     #             "multi_match": {
     #                 "query": query,
-    #                 "fields": ["thesis_id"]
+    #                 "fields": ["mingcheng^2", "weizhi"]
     #             }
     #         }
     #     }
-    #     match_data = self.es.search(index=self.index_name, body=ds1, size=count)
-    #     return match_data
-    #
-    # def search_thesis(self, query, count: int = 30):
-    #     ds1 = {
-    #         "_source": {
-    #             "includes": ["thesis_id"]
-    #         },
-    #         "query": {
-    #             "multi_match": {
-    #                 "query": query,
-    #                 "fields": ["keywords"]
-    #             }
-    #         }
-    #     }
-    #     match_data = self.es.search(index=self.index_name, body=ds1, size=count)
-    #     return match_data
-    #     关键词模糊查询
-    def search(self, query: str, count: int = 20):
+    #     # 获取数据总量（期待有更好的解决办法）
+    #     all_data_number = self.es.search(index=self.index_name, body=ds1, size=max_size)
+    #     # 分页数据返回
+    #     match_data = self.es.search(index=self.index_name, body=ds1, from_=page_number, size=page_size)
+    #     return [match_data, len(all_data_number["hits"]["hits"])]
+
+    # 简化版
+    def search(self, query: str, max_size: int = 100):
         ds1 = {
+            "min_score": 5.0,
             "query": {
                 "multi_match": {
                     "query": query,
@@ -54,7 +42,7 @@ class ElasticSearch:
                 }
             }
         }
-        match_data = self.es.search(index=self.index_name, body=ds1, size=count)
+        match_data = self.es.search(index=self.index_name, body=ds1, size=max_size)
         return match_data
 
 

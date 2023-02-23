@@ -79,26 +79,22 @@ def home_load():
 
 @bp.route("/search", methods=['POST'])
 def search_words():
-    search_word = request.json.get('word')
-    answers1 = XueWei.query.filter(or_(XueWei.mingcheng.like("%" + search_word + "%"),
-                                   XueWei.weizhi.like("%" + search_word + "%"))
-                                   if search_word is not None else "").limit(20).all()
-    alldata = []
-    for single_thesis in answers1:
-        single_data = XueWei.to_search_dict(single_thesis)
-        alldata.append(single_data)
-
-    key_word = search_word
-    keyword = str(key_word)
+    search_word = str(request.json.get('word'))
+    search_page = int(request.json.get('page_number')) - 1
+    page_size = 10
 
     es = ElasticSearch(index_name="xuewei_infor", index_type="test-type")
-    data = es.search(keyword)
-    address_data = data["hits"]["hits"]
-    address_list = []
-    for item in address_data:
-        address_list.append(item["_source"])
+    data = es.search(search_word)
 
-    return Result.success(address_list)
+    address_data = data["hits"]["hits"]
+    data_number = len(address_data)
+    # 取分页结果
+    page_data = address_data[search_page*page_size:search_page*page_size + page_size]
+
+    address_list = []
+    for item in page_data:
+        address_list.append(item["_source"])
+    return Result.success_search(address_list, data_number)
 
 
 @bp.route("/createES")
