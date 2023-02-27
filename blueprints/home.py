@@ -83,16 +83,17 @@ def search_words():
     search_page = int(request.json.get('page_number')) - 1
     page_size = 10
 
-    es = ElasticSearch(index_name="xuewei_infor", index_type="test-type")
-    data = es.search(search_word)
+    es = ElasticSearch(index_name=["jiufa_infor", "xuewei_infor", "bingzheng_infor"])
+    data = es.search(search_word, 1.0, 100)
 
     address_data = data["hits"]["hits"]
     data_number = len(address_data)
     # 取分页结果
     page_data = address_data[search_page*page_size:search_page*page_size + page_size]
-
     address_list = []
     for item in page_data:
+        # 索引传递
+        item["_source"]["index"] = item["_index"]
         address_list.append(item["_source"])
     return Result.success_search(address_list, data_number)
 

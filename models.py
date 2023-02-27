@@ -10,6 +10,14 @@ class JiuFa(db.Model):
     mingcheng = db.Column(db.String(500), nullable=True)
     jieshao = db.Column(db.String(500), nullable=True)
 
+    def to_search_dict(self):
+        data = {
+            'id': self.id,
+            'mingcheng': self.mingcheng,
+            'jieshao': self.jieshao,
+        }
+        return data
+
 
 class BingZheng(db.Model):
     __tablename__ = 'bingzheng'
@@ -18,6 +26,14 @@ class BingZheng(db.Model):
     mingcheng = db.Column(db.String(500), nullable=True)
     bingzheng = db.Column(db.String(500), nullable=True)
     zhiliao = db.Column(db.String(500), nullable=True)
+
+    def to_search_dict(self):
+        data = {
+            'id': self.id,
+            'mingcheng': self.mingcheng,
+            'bingzheng': self.bingzheng,
+        }
+        return data
 
 
 class XueWei(db.Model):

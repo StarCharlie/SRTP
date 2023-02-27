@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask
 from blueprints import user_bp, home_bp
 import config
 from extension import db
@@ -18,7 +18,7 @@ app.register_blueprint(user_bp)
 
 @app.route("/")
 def to_home():
-    return redirect(url_for("home.workspace"))
+    return "hello"
 
 
 if __name__ == '__main__':
