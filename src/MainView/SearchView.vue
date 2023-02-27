@@ -21,8 +21,10 @@
                   </el-col>
                   <!-- 文字部分 -->
                   <el-col :span="13" :offset="1">
-                    <h2 id="title" v-html="item['mingcheng']"></h2>
-                    <p id="weizhi" v-html="item['weizhi']"></p>
+                    <h2 id="title" v-html="item['title']"></h2>
+                    <!-- 总有一天我会把这个逆天操作改掉 -->
+                    <el-tag class="ml-2" size="large" :type="index_change(item['index'])[1]" >{{ index_change(item['index'])[0] }}</el-tag>
+                    <p id="infor" v-html="item['infor']"></p>
                   </el-col>
                   <!-- 按钮部分 -->
                   <el-col :span="5">
@@ -37,9 +39,9 @@
                   class="page"
                   background
                   layout="prev, pager, next"
-                  :total="200"
-                  @current-change="pageswitch()"
-                  v-model:current-page="currentPage"
+                  :total=totalNumber
+                  @current-change="search()"
+                  v-model:current-page="transform.page_number"
                 />
               </div>
         </el-col>
@@ -60,13 +62,21 @@ import { Search } from '@element-plus/icons-vue'
             return `<span style="color:#66CCFF">${val}</span>`
         })
     }
+    export const index_change = (name) =>{
+      if(name == "xuewei_infor") return ["穴位", "success"]
+      else if(name == "jiufa_infor") return ["灸法", "info"]
+      else if(name == "bingzheng_infor") return ["病症", "warning"]
+      else return "其它"
+    }
     export default {
     data(){
         return{
         transform: {
-            word: ""
+            word: "",
+            page_number: 1,
         },
         data: null,
+        totalNumber: null,
         showResult: false,
         favor: {
             id: "",
@@ -83,8 +93,8 @@ import { Search } from '@element-plus/icons-vue'
     methods: {
         cSuggestions(suggestions){
             suggestions.map(item => {
-                item['mingcheng'] = highLight(item['mingcheng'], this.transform.word)
-                item['weizhi'] = highLight(item['weizhi'], this.transform.word)
+                item['title'] = highLight(item['title'], this.transform.word)
+                item['infor'] = highLight(item['infor'], this.transform.word)
             })
             this.data = suggestions;
         },
@@ -92,6 +102,7 @@ import { Search } from '@element-plus/icons-vue'
             this.$http.post('/home/search', this.transform).then(res=>{
                 this.showResult = true;
                 this.cSuggestions(res.data['data']);
+                this.totalNumber = res.data['totalNumber'];
             });
         },
         async toInfor(id){
