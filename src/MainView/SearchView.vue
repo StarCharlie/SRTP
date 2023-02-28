@@ -12,6 +12,12 @@
     </el-row>
     <el-row :gutter="20" v-if="showResult">
         <el-col :span="20" :offset="2">
+            <!-- 选择框 -->
+            <div style="text-align: center;">
+                <el-checkbox v-model="transform.select_infor.xuewei" @change="search()" label="穴位" size="large" />
+                <el-checkbox v-model="transform.select_infor.jiufa" @change="search()" label="灸法" size="large" />
+                <el-checkbox v-model="transform.select_infor.bingzheng" @change="search()" label="病症" size="large" />
+            </div>
             <!-- 对card进行相关的设计 -->
               <el-card v-for="item in data" :key="item" shadow="always">
                 <el-row :gutter="20">
@@ -23,7 +29,7 @@
                   <el-col :span="13" :offset="1">
                     <h2 id="title" v-html="item['title']"></h2>
                     <!-- 总有一天我会把这个逆天操作改掉 -->
-                    <el-tag class="ml-2" size="large" :type="index_change(item['index'])[1]" >{{ index_change(item['index'])[0] }}</el-tag>
+                    <el-tag class="ml-2" size="large" :type="index_translate(item['index'])[1]" >{{ index_translate(item['index'])[0] }}</el-tag>
                     <p id="infor" v-html="item['infor']"></p>
                   </el-col>
                   <!-- 按钮部分 -->
@@ -34,15 +40,17 @@
                   </el-col>
                 </el-row>
               </el-card>
-              <div style="vertical-align: middle;text-align:center; margin-top: 50px; margin-left: 100px">
+              <div style="margin-top: 50px; margin-left: 20px; margin-bottom: 50px;">
                 <el-pagination
-                  class="page"
-                  background
-                  layout="prev, pager, next"
-                  :total=totalNumber
+                  @size-change="search()"
                   @current-change="search()"
                   v-model:current-page="transform.page_number"
-                />
+                  :page-sizes="[5, 10, 15, 20]"
+                  v-model:page-size="transform.page_size"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="totalNumber">
+                </el-pagination>
+
               </div>
         </el-col>
         <el-col :span="2"></el-col>
@@ -62,7 +70,7 @@ import { Search } from '@element-plus/icons-vue'
             return `<span style="color:#66CCFF">${val}</span>`
         })
     }
-    export const index_change = (name) =>{
+    export const index_translate = (name) =>{
       if(name == "xuewei_infor") return ["穴位", "success"]
       else if(name == "jiufa_infor") return ["灸法", "info"]
       else if(name == "bingzheng_infor") return ["病症", "warning"]
@@ -74,6 +82,12 @@ import { Search } from '@element-plus/icons-vue'
         transform: {
             word: "",
             page_number: 1,
+            page_size: 10,
+            select_infor: {
+                xuewei: true,
+                jiufa: true,
+                bingzheng: true,
+            },
         },
         data: null,
         totalNumber: null,
