@@ -73,18 +73,29 @@ def home_load():
     搜索功能
     1.目前：根据穴位的名称/位置进行一个简单匹配
     2.前端做了简单的分页，后端需要返回一个封装好的（1.总数 2.名称和位置）
-    3.后续考虑加入筛选功能以及模糊匹配
+    3.后续考虑加入筛选功能以及模糊匹配(2023.2.28 已完成)
 '''
 
 
 @bp.route("/search", methods=['POST'])
 def search_words():
+    # 参数设置，依次为：关键词，目前页数，单页条数，筛选条件，阈值，最大返回条数
     search_word = str(request.json.get('word'))
     search_page = int(request.json.get('page_number')) - 1
-    page_size = 10
+    page_size = int(request.json.get('page_size'))
+    search_infor = list(request.json.get('select_infor').values())
+    min_score = 1.0
+    max_count = 100
 
-    es = ElasticSearch(index_name=["jiufa_infor", "xuewei_infor", "bingzheng_infor"])
-    data = es.search(search_word, 1.0, 100)
+    all_indexes = ["xuewei_infor", "jiufa_infor", "bingzheng_infor"]
+    search_indexes = []
+
+    for i in range(0, 3):
+        if search_infor[i]:
+            search_indexes.append(all_indexes[i])
+
+    es = ElasticSearch(index_name=search_indexes)
+    data = es.search(search_word, min_score, max_count)
 
     address_data = data["hits"]["hits"]
     data_number = len(address_data)
