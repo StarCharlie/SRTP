@@ -8,11 +8,13 @@ from es import ElasticSearch, create_es_data
 bp = Blueprint("home", __name__, url_prefix="/home")
 
 
-# 工作台
+# 查看Infor界面，第一次进入时需要去发送global信息
 @bp.route("/InforView", methods=['GET'])
 def find_Infor():
     data_id = int(request.args.get('id'))
     mode = int(request.args.get('category'))
+    menuReady = request.args.get('menuReady')
+
     alldata_dict = []
     if mode == 1:
         alldata = JiuFa.query.filter_by(id=data_id).first()
@@ -20,9 +22,41 @@ def find_Infor():
         alldata = BingZheng.query.filter_by(id=data_id).first()
     else:
         alldata = XueWei.query.filter_by(id=data_id).first()
-    dic_tret = dict(alldata.__dict__)
-    dic_tret.pop('_sa_instance_state', None)
-    alldata_dict.append(dic_tret)
+
+    alldata_dict.append(alldata.to_dict())
+
+    # 打包左导航栏过去
+    if menuReady == "false":
+        menuList = {
+                        "灸法": {},
+                        "穴位": {},
+                        "病症": {},
+                    }
+        # 灸法
+        result = JiuFa.query.group_by("leibie").all()
+        for item in result:
+            menuList["灸法"].update({item.leibie: []})
+        result = JiuFa.query.all()
+        for item in result:
+            menuList["灸法"][item.leibie].append([item.id, 1, item.mingcheng])
+
+        # 病症
+        result = BingZheng.query.group_by("leibie").all()
+        for item in result:
+            menuList["病症"].update({item.leibie: []})
+        result = BingZheng.query.all()
+        for item in result:
+            menuList["病症"][item.leibie].append([item.id, 2, item.mingcheng])
+
+        # 穴位
+        result = XueWei.query.group_by("leibie").all()
+        for item in result:
+            menuList["穴位"].update({item.leibie: []})
+        result = XueWei.query.all()
+        for item in result:
+            menuList["穴位"][item.leibie].append([item.id, 3, item.mingcheng])
+        return Result.success_menu(alldata_dict, menuList)
+
     return Result.success(alldata_dict)
 
 

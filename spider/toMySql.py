@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlalchemy
 
+
 def toMySql():
 
     configure = {
@@ -11,7 +12,7 @@ def toMySql():
         "HOST": "localhost",
         "PORT": "3306",
         "CHARSET": "utf8",
-        "EXCEL_PATH": r"C:\Users\HUAWEI\Desktop\aijiu.xlsx",
+        "EXCEL_PATH": r"C:\Users\HUAWEI\Desktop\°¬¾Ä.xls",
     }
     connect_sql = "mysql+pymysql://{0}:{1}@{2}:{3}/{4}?charset={5}".format(configure['USER'], configure['PASSWORD'],
                                                                            configure['HOST'], configure['PORT'],

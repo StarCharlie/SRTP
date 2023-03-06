@@ -7,8 +7,18 @@ from extension import db
 class JiuFa(db.Model):
     __tablename__ = 'jiufa'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
+    leibie = db.Column(db.String(500), nullable=True)
     mingcheng = db.Column(db.String(500), nullable=True)
     jieshao = db.Column(db.String(500), nullable=True)
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'leibie': self.leibie,
+            'mingcheng': self.mingcheng,
+            'jieshao': self.jieshao,
+        }
+        return data
 
     def to_search_dict(self):
         data = {
@@ -27,6 +37,16 @@ class BingZheng(db.Model):
     bingzheng = db.Column(db.String(500), nullable=True)
     zhiliao = db.Column(db.String(500), nullable=True)
 
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'leibie': self.leibie,
+            'mingcheng': self.mingcheng,
+            'bingzheng': self.bingzheng,
+            'zhiliao': self.zhiliao,
+        }
+        return data
+
     def to_search_dict(self):
         data = {
             'id': self.id,
@@ -39,6 +59,7 @@ class BingZheng(db.Model):
 class XueWei(db.Model):
     __tablename__ = 'xuewei'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
+    leibie = db.Column(db.String(500), nullable=True)
     mingcheng = db.Column(db.String(500), nullable=True)
     weizhi = db.Column(db.String(500), nullable=True)
     gongxiao = db.Column(db.String(64000), nullable=True)
@@ -58,6 +79,7 @@ class XueWei(db.Model):
     def to_dict(self):
         data = {
             'id': self.id,
+            'leibie': self.leibie,
             'mingcheng': self.mingcheng,
             'weizhi': self.weizhi,
             'gongxiao': self.gongxiao,
