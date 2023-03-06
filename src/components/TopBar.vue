@@ -6,7 +6,6 @@
       text-color="#fff"
       :ellipsis="false"
       background-color="#2f3e4d"
-      @select="handleSelect"
       router
     >
     <!-- 用户端 -->
@@ -49,14 +48,13 @@
     </div>
 
     <el-menu
-      :default-active="activeIndex2"
+      default-active="/"
       class="menu-2"
       mode="horizontal"
       background-color="#90C2C3"
       text-color="#fff"
       active-text-color="#ffd04b"
       popper-effect="light"
-      @select="handleSelect"
       router
     >
       <el-menu-item index="/"> 主页 </el-menu-item>

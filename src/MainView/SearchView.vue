@@ -62,20 +62,22 @@ import { Search } from '@element-plus/icons-vue'
 </script>
 
 <script>
-    export const highLight = (str, key) => {
+    const highLight = (str, key) => {
         if(key == "") return str;
         if(str.length >= 200) str = str.substring(0, 200) + "...";
         const reg = new RegExp(key, 'ig')
         return str.replace(reg, (val) => {
             return `<span style="color:#66CCFF">${val}</span>`
         })
+
     }
-    export const index_translate = (name) =>{
+    const index_translate = (name) =>{
       if(name == "xuewei_infor") return ["穴位", "success"]
       else if(name == "jiufa_infor") return ["灸法", "info"]
       else if(name == "bingzheng_infor") return ["病症", "warning"]
       else return "其它"
     }
+
     export default {
     data(){
         return{
