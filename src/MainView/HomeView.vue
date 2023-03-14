@@ -116,7 +116,7 @@ export default {
             path: '/Infor',
             query: {
               category: this.mode,
-              id: id
+              id: id,
             }
           })
         },

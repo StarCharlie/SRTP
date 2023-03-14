@@ -35,7 +35,7 @@
                   <!-- 按钮部分 -->
                   <el-col :span="5">
                     <div style="text-align: -webkit-center">
-                      <el-button type="primary" style="width:150px" @click="toInfor(item['id'])">详情</el-button>
+                      <el-button type="primary" style="width:150px" @click="toInfor(item['id'],  index_translate(item['index'])[2])">详情</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -72,11 +72,12 @@ import { Search } from '@element-plus/icons-vue'
 
     }
     const index_translate = (name) =>{
-      if(name == "xuewei_infor") return ["穴位", "success"]
-      else if(name == "jiufa_infor") return ["灸法", "info"]
-      else if(name == "bingzheng_infor") return ["病症", "warning"]
+      if(name == "xuewei_infor") return ["穴位", "success", 0]
+      else if(name == "jiufa_infor") return ["灸法", "info", 1]
+      else if(name == "bingzheng_infor") return ["病症", "warning", 2]
       else return "其它"
     }
+
 
     export default {
     data(){
@@ -121,11 +122,12 @@ import { Search } from '@element-plus/icons-vue'
                 this.totalNumber = res.data['totalNumber'];
             });
         },
-        async toInfor(id){
+        async toInfor(id, category){
           this.$router.push({
             path: '/Infor',
             query: {
-              id: id
+              'id': id,
+              'category': category,
             }
           })
         },

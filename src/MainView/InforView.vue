@@ -3,7 +3,7 @@
   <el-row :gutter="20">
       <!-- 左边栏 -->
       <el-col :span="4">
-        <div v-if="this.$cookies.get('menuListReady') != null && this.dataTransformOver" style="margin-top: 50px;">
+        <div v-if="this.dataTransformOver" style="margin-top: 50px;">
             <el-input
               v-model="filterText"
               style="width: 80%; margin-left: 20px;"
@@ -91,7 +91,6 @@ export default {
 
     created(){
         // 如果已经有数据了，则为T
-        this.menuListReady = (this.$global.search_list.length != 0)
         this.getInfor();
     },
     watch: {
@@ -110,11 +109,11 @@ export default {
               params: {
                 'id': this.$route.query.id,
                 'category': this.$route.query.category,
-                'menuReady': (this.$cookies.get('menuListReady') != null),
+                'menuReady': (window.sessionStorage.getItem('menuList') != null),
               }
             }).then(res=>{
                 // 首次查看左列表
-                if(this.$cookies.get('menuListReady') == null){
+                if(window.sessionStorage.getItem('menuList') == null){
                   var tempResult = res.data['menu'];
                   var tree = []
                   // 第一层，遍历三种名称
@@ -147,7 +146,6 @@ export default {
                       )
                   }
                   window.sessionStorage.setItem("menuList", JSON.stringify(tree))
-                  this.$cookies.set("menuListReady", true, {expires: "1D"});
                 }
                 this.menuList =  JSON.parse(window.sessionStorage.getItem('menuList'))
                 this.data = res.data['data'][0];
@@ -171,7 +169,6 @@ export default {
                 params: {
                   'id': data.id,
                   'category': data.category,
-                  'menuReady': (this.$cookies.get('menuListReady') != null),
                 }
               }).then(res=>{
                 this.dataTransformOver = false
