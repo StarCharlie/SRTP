@@ -82,14 +82,19 @@ def get_bingzheng_data():
     return alldata
 
 
+# 注意，使用该函数前务必询问负责人【仅可通过/home/createES询问】
 def create_es_data():
     es = Elasticsearch('http://localhost:9200')
     es.indices.delete(index="xuewei_infor")
+    es.indices.delete(index="jiufa_infor")
+    es.indices.delete(index="bingzheng_infor")
+
     try:
         # 为了方便多索引联合查询，尽量保证索引结构一致
         results = get_xuewei_data()
         for row in results:
             infor = {
+                "id": row['id'],
                 "title": row['mingcheng'],
                 "infor": row['weizhi']
             }
@@ -98,6 +103,7 @@ def create_es_data():
         results = get_jiufa_data()
         for row in results:
             infor = {
+                "id": row['id'],
                 "title": row['mingcheng'],
                 "infor": row['jieshao']
             }
@@ -105,6 +111,7 @@ def create_es_data():
         results = get_bingzheng_data()
         for row in results:
             infor = {
+                "id": row['id'],
                 "title": row['mingcheng'],
                 "infor": row['bingzheng']
             }
