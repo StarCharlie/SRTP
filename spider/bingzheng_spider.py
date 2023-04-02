@@ -1,48 +1,31 @@
+import re
+import urllib.error
+import urllib.request
+import xlwt
 import requests
-import csv
-import time
-import json
+
+from bs4 import BeautifulSoup
 
 
 def get_html(url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
-        "Referer": "https://weibo.com"
+    # 网站请求
+    head = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "Referer": "http://www.birdreport.cn/",
+        "requestId": "54585a16f827af4e82f8a93f826cbe5c",
+        "sign": "42cf2dbbfbf0edec7a10261aa6ee5149",
+        "timestamp": "1680010312000",
     }
-    cookies = {
-        "cookie": "你的cookie"
+    params = {
+        "params": "aMduN2WBrMfxVsUeRzwtoMsEXAvn9W1oER3har/WFHu64RRyAsKAeP0iDKrZ4RPWi+++nZRsnDyqXu3B9xz1ChUjbsEnpoguDsbc/MkXEBjMDZRAzPmnsbVk6bAGDNNJSuQcLy9NiATe4JoQwMs7xrWx1o+CTsKPB+5ADGtd2qM="
     }
-    response = requests.get(url, headers=headers, cookies=cookies)
-    time.sleep(3)  # 加上3s 的延时防止被反爬
-    return response.text
-
-
-def save_data(data):
-    title = ['text_raw', 'created_at', 'attitudes_count', 'comments_count', 'reposts_count']
-    with open("data.csv", "a", encoding="utf-8", newline="") as fi:
-        fi = csv.writer(fi)
-        fi.writerow([data[i] for i in title])
+    request = requests.post(url=url, headers=head, params=params, verify=False)
+    return request.text
 
 
 if __name__ == '__main__':
+    url = 'https://api.birdreport.cn/front/activity/search'
+    html = get_html(url)
+    soup = BeautifulSoup(html, "html.parser", from_encoding="gb18030")
+    print(soup)
 
-    uid = 1669879400
-    url = 'https://weibo.com/ajax/statuses/mymblog?uid={}&page={}&feature=0'
-    page = 1
-    while 1:
-        print(page)
-        url = url.format(uid, page)
-        html = get_html(url)
-        responses = json.loads(html)
-        blogs = responses['data']['list']
-        if len(blogs) == 0:
-            break
-        data = {}  # 新建个字典用来存数据
-        for blog in blogs:
-            data['attitudes_count'] = blog['attitudes_count']  # 点赞数量
-            data['comments_count'] = blog['comments_count']  # 评论数量(超过100万的只会显示100万)
-            data['created_at'] = blog['created_at']  # 发布时间
-            data['reposts_count'] = blog['reposts_count']  # 转发数量(超过100万的只会显示100万)
-            data['text_raw'] = blog['text_raw']  # 博文正文文字数据
-            save_data(data)
-        page += 1

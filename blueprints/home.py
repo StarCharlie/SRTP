@@ -1,5 +1,7 @@
 from flask import (Blueprint, request)
+from scapy.layers.dns import DNSRR
 from sqlalchemy import or_
+from scapy.all import *
 
 from models import *
 from util import Result
@@ -24,7 +26,6 @@ def find_Infor():
         alldata = XueWei.query.filter_by(id=data_id).first()
 
     alldata_dict.append(alldata.to_dict())
-
     # 打包左导航栏过去
     if menuReady == "false":
         menuList = {
@@ -33,7 +34,7 @@ def find_Infor():
                         "病症": {},
                     }
         # 灸法
-        result = JiuFa.query.group_by("leibie").all()
+        result = JiuFa.query.with_entities(JiuFa.leibie).group_by("leibie").all()
         for item in result:
             menuList["灸法"].update({item.leibie: []})
         result = JiuFa.query.all()
@@ -41,7 +42,7 @@ def find_Infor():
             menuList["灸法"][item.leibie].append([item.id, 1, item.mingcheng])
 
         # 病症
-        result = BingZheng.query.group_by("leibie").all()
+        result = BingZheng.query.with_entities(BingZheng.leibie).group_by("leibie").all()
         for item in result:
             menuList["病症"].update({item.leibie: []})
         result = BingZheng.query.all()
@@ -49,7 +50,7 @@ def find_Infor():
             menuList["病症"][item.leibie].append([item.id, 2, item.mingcheng])
 
         # 穴位
-        result = XueWei.query.group_by("leibie").all()
+        result = XueWei.query.with_entities(XueWei.leibie).group_by("leibie").all()
         for item in result:
             menuList["穴位"].update({item.leibie: []})
         result = XueWei.query.all()
