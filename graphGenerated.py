@@ -9,12 +9,16 @@ import pandas as pd
 import py2neo
 from py2neo import Node, Relationship
 from config import NEO4j_NAME, NEO4j_PASS, NEO4j_GRAPH
+import pyodbc
 
 # database connection
 
-graph = py2neo.Graph('http://localhost:7474', auth=(NEO4j_NAME, NEO4j_PASS), name=NEO4j_GRAPH)
+graph = py2neo.Graph('neo4j://localhost:7687', auth=(NEO4j_NAME, NEO4j_PASS), name=NEO4j_GRAPH)
 file_path = 'static/datas/艾灸.xls'
 relation_path = 'static/datas/病症穴位.xls'
+
+file_path2 = 'static/datas/灸法.xls'
+
 max_count_test = 50
 
 
@@ -35,6 +39,7 @@ def create_bingzheng_graph():
         graph.merge(relation, 'category', 'name')
 
         category_of_disease = Relationship(node, '属于', relation)
+        print(relation.values())
         graph.create(category_of_disease)
 
 
@@ -63,6 +68,25 @@ def create_disease_xuewei_relation():
         graph.create(xuewei_of_bingzheng)
 
 
+def create_jiufa_graph():
+    jiufa_data = pd.read_excel(file_path2, sheet_name="jiufa", header=0)
+    jiufa_array = np.array(jiufa_data)
+    for i in range(0, len(jiufa_array)):
+        node = Node('jiufa',
+                    id=jiufa_array[i][0],
+                    name=jiufa_array[i][2]
+                    )
+        relation = Node('category',
+                        name=jiufa_array[i][1])
+
+        graph.create(node)
+        graph.merge(relation, 'category', 'name')
+
+        category_of_jiufa = Relationship(node, '包括', relation)
+        graph.create(category_of_jiufa)
+
+
+
 def test():
     bingzheng_node = graph.nodes.match("disease", name='中风').first()
     print(dict(bingzheng_node))
@@ -76,4 +100,5 @@ if __name__ == '__main__':
     create_bingzheng_graph()
     create_xuewei_graph()
     create_disease_xuewei_relation()
+    create_jiufa_graph()
     print("create over")
