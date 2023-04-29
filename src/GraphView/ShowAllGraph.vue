@@ -41,15 +41,16 @@ export default {
 
   mounted() {
     // 查询子句
-    var query= "MATCH p=(n:acupoint {name: '太白'})<-->() RETURN p"
+    var query= "MATCH p=(n:acupoint {name: '阳陵泉'})<-->() RETURN p"
     this.executeCypher(query);
   },
 
   methods:{
 
     async searchWord(){
+        console.log(1);
         var word = this.searchInput.word
-        var query = "MATCH p=(n{name: '"+ word +"'})<-->() RETURN p"
+        var query = "MATCH (d:disease{name:'" + word + "'})-[:`属于`]->(c:category), (d)-[:`可用灸法`]->(j:jiufa)-[:`治疗"+ word +"`]->(x:acupoint)\n" + "RETURN d,c,j, x"
         this.executeCypher(query);
     },
 
@@ -59,12 +60,13 @@ export default {
       this.echartsData =  [],
       this.category = [] //echarts图例数据数
       // 创建实例
-      this.driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'syt20010907'));
+      this.driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'ygf20200407'));
       let me = this;
       me.records = [];
       this.clearAll = true;
       let session = this.driver.session();
       if (query == "") return;
+      console.log(query);
       session.run(query, {}).then((result) => {
         me.clearAll = false;
         me.records = result.records;
@@ -75,6 +77,7 @@ export default {
             name: me.records[i]._fields[0].segments[0].start.properties.name,
             category: me.records[i]._fields[0].segments[0].start.labels[0]
           });
+          console.log('start node name:'+me.records[i]._fields[0].segments[0].start.properties.name)
           // end
           this.echartsData.push({
             name: me.records[i]._fields[0].segments[0].end.properties.name,
@@ -86,7 +89,7 @@ export default {
             name: me.records[i]._fields[0].segments[0].relationship.type,
           });
         }
-
+        console.log(this.echartsData);
         //提取标签（根据所有的category）
         var arrId = [];
         var legend = [];
@@ -99,6 +102,7 @@ export default {
         }
 
         this.category = Array.from(new Set(legend))
+        console.log(this.category);
 
         session.close();
 
@@ -108,7 +112,7 @@ export default {
               // enterable: true,//鼠标是否可进入提示框浮层中
               // formatter: formatterHover,//修改鼠标悬停显示的内容
           },
-          color:['#fc853e','#28cad8', "#66CCFF"],
+          color:['#fc853e','#28cad8', "#66CCFF", '#99cc66'],
           // 图例设置
           legend: [{
               type: 'scroll',
