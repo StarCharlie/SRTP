@@ -29,7 +29,7 @@ export default {
   data() {
     return{
       searchInput: {
-        word: ""
+        word: "普通感冒"
       },
       echartsData: [],
       nodesRelation: [],
@@ -41,16 +41,14 @@ export default {
 
   mounted() {
     // 查询子句
-    var query= "MATCH p=(n:acupoint {name: '阳陵泉'})<-->() RETURN p"
-    this.executeCypher(query);
+    this.searchWord()
   },
 
   methods:{
 
     async searchWord(){
-        console.log(1);
         var word = this.searchInput.word
-        var query = "MATCH (d:disease{name:'" + word + "'})-[:`属于`]->(c:category), (d)-[:`可用灸法`]->(j:jiufa)-[:`治疗"+ word +"`]->(x:acupoint)\n" + "RETURN d,c,j, x"
+        var query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位) RETURN p"
         this.executeCypher(query);
     },
 
@@ -60,36 +58,44 @@ export default {
       this.echartsData =  [],
       this.category = [] //echarts图例数据数
       // 创建实例
-      this.driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'ygf20200407'));
+      this.driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic(this.$global.neo4jUserName, this.$global.neo4jUserPassword));
       let me = this;
       me.records = [];
       this.clearAll = true;
       let session = this.driver.session();
       if (query == "") return;
-      console.log(query);
       session.run(query, {}).then((result) => {
         me.clearAll = false;
         me.records = result.records;
         // 开始处理数据
         for (let i = 0; i < me.records.length; i++) {
-          // start
-          this.echartsData.push({
-            name: me.records[i]._fields[0].segments[0].start.properties.name,
-            category: me.records[i]._fields[0].segments[0].start.labels[0]
-          });
-          console.log('start node name:'+me.records[i]._fields[0].segments[0].start.properties.name)
-          // end
-          this.echartsData.push({
-            name: me.records[i]._fields[0].segments[0].end.properties.name,
-            category: me.records[i]._fields[0].segments[0].end.labels[0]
-          });
-          this.nodesRelation.push({
-            source: me.records[i]._fields[0].segments[0].start.properties.name,
-            target: me.records[i]._fields[0].segments[0].end.properties.name,
-            name: me.records[i]._fields[0].segments[0].relationship.type,
-          });
+          var path_infor = me.records[i]._fields[0].segments
+          for (let j = 0; j < path_infor.length; j++){
+            // start
+            let startNode = path_infor[j].start
+            if (!this.echartsData.some(item => item.name === startNode.properties.name)) {
+              this.echartsData.push({
+                name: startNode.properties.name,
+                category: startNode.labels[0]
+              })
+            }
+            // end
+            let endNode = path_infor[j].end
+            if (!this.echartsData.some(item => item.name === endNode.properties.name)) {
+              this.echartsData.push({
+                name: endNode.properties.name,
+                category: endNode.labels[0]
+              })
+            }
+            if (!this.nodesRelation.some(item => (item.source === path_infor[j].start.properties.name && item.target === path_infor[j].end.properties.name))) {
+              this.nodesRelation.push({
+                source: path_infor[j].start.properties.name,
+                target: path_infor[j].end.properties.name,
+                name: path_infor[j].relationship.type,
+              });
+            }
+          }
         }
-        console.log(this.echartsData);
         //提取标签（根据所有的category）
         var arrId = [];
         var legend = [];
@@ -102,8 +108,6 @@ export default {
         }
 
         this.category = Array.from(new Set(legend))
-        console.log(this.category);
-
         session.close();
 
         this.options = {
@@ -129,7 +133,7 @@ export default {
                 type: "graph",
                 layout: "force",
                 zoom: 1.1,
-                symbolSize: 60,
+                symbolSize: 50,
                 draggable: true,
                 roam: true,
                 hoverAnimation: true,
