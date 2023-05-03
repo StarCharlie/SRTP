@@ -10,7 +10,9 @@
         placeholder="请输入"
         style="width:200px; margin-top: 30px;"
       />
-      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord" circle />
+      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(1)">病症</el-button>
+      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(2)">灸法</el-button>
+      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(3)">穴位</el-button>
     </div>
     <div ref="graph" style="width:90%; height: 600px; margin:auto; background-color:whitesmoke;"></div>
   </div>
@@ -41,14 +43,24 @@ export default {
 
   mounted() {
     // 查询子句
-    this.searchWord()
+    this.searchWord(1)
   },
 
   methods:{
 
-    async searchWord(){
+    async searchWord(mode){
         var word = this.searchInput.word
-        var query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位), q=(d)-[:`属于`]->(l:类别) RETURN p, q"
+        var query = ""
+        if(mode === 1){
+          query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位), q=(d)-[:`属于`]->(l:类别) RETURN p, q"
+        }
+        else if(mode === 2){
+          query = "MATCH p=(j:灸法{name:'"+word+"'})-[:`属于`]->(l:类别) RETURN p"
+        }
+        else{
+          query = "MATCH p=(x:穴位{name:'"+word+"'})-[:`属于`]->(l:类别) RETURN p"
+        }
+        console.log(query)
         this.executeCypher(query);
     },
 
