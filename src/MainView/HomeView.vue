@@ -17,7 +17,8 @@
     <el-row :gutter="20">
       <el-col :span="3"></el-col>
       <el-col :span="9">
-        <div class="radius" style="margin-right: 10px;"></div>
+        <div class="radius" style="margin-right: 10px;">
+        </div>
       </el-col>
       <el-col :span="9">
         <div class="radius" style="margin-left: 10px;">

@@ -48,7 +48,7 @@ export default {
 
     async searchWord(){
         var word = this.searchInput.word
-        var query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位) RETURN p"
+        var query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位), q=(d)-[:`属于`]->(l:类别) RETURN p, q"
         this.executeCypher(query);
     },
 
@@ -67,32 +67,36 @@ export default {
       session.run(query, {}).then((result) => {
         me.clearAll = false;
         me.records = result.records;
+        console.log(result.records)
         // 开始处理数据
         for (let i = 0; i < me.records.length; i++) {
-          var path_infor = me.records[i]._fields[0].segments
-          for (let j = 0; j < path_infor.length; j++){
-            // start
-            let startNode = path_infor[j].start
-            if (!this.echartsData.some(item => item.name === startNode.properties.name)) {
-              this.echartsData.push({
-                name: startNode.properties.name,
-                category: startNode.labels[0]
-              })
-            }
-            // end
-            let endNode = path_infor[j].end
-            if (!this.echartsData.some(item => item.name === endNode.properties.name)) {
-              this.echartsData.push({
-                name: endNode.properties.name,
-                category: endNode.labels[0]
-              })
-            }
-            if (!this.nodesRelation.some(item => (item.source === path_infor[j].start.properties.name && item.target === path_infor[j].end.properties.name))) {
-              this.nodesRelation.push({
-                source: path_infor[j].start.properties.name,
-                target: path_infor[j].end.properties.name,
-                name: path_infor[j].relationship.type,
-              });
+          var field_infor = me.records[i]._fields
+          for(let j = 0; j < field_infor.length; j++){
+            var path_infor = field_infor[j].segments
+            for (let k = 0; k < path_infor.length; k++){
+              // start
+              let startNode = path_infor[k].start
+              if (!this.echartsData.some(item => item.name === startNode.properties.name)) {
+                this.echartsData.push({
+                  name: startNode.properties.name,
+                  category: startNode.labels[0]
+                })
+              }
+              // end
+              let endNode = path_infor[k].end
+              if (!this.echartsData.some(item => item.name === endNode.properties.name)) {
+                this.echartsData.push({
+                  name: endNode.properties.name,
+                  category: endNode.labels[0]
+                })
+              }
+              if (!this.nodesRelation.some(item => (item.source === path_infor[k].start.properties.name && item.target === path_infor[k].end.properties.name))) {
+                this.nodesRelation.push({
+                  source: path_infor[k].start.properties.name,
+                  target: path_infor[k].end.properties.name,
+                  name: path_infor[k].relationship.type,
+                });
+              }
             }
           }
         }
