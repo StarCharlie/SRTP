@@ -17,7 +17,21 @@
     <el-row :gutter="20">
       <el-col :span="3"></el-col>
       <el-col :span="9">
-        <div class="radius" style="margin-right: 10px;">
+        <div class="radius" >
+          <el-scrollbar style="height: 350px; width:100%">
+            <div class="block" style="height: 100%">
+              <div style="height:50px;text-align: center">
+                <el-row class="mb-4" style="margin-left: 42%;margin-top: 1%">
+                  <h3>十四经络穴</h3>
+                </el-row>
+              </div>
+              <el-carousel >
+                <el-carousel-item v-for="(item, index) in gallery" :key="index">
+                  <img :src="item.src" style="width:550px; height:230px;margin-top:1%; margin-left:35px;display: flex;justify-content: center;align-items: center;" >
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-scrollbar>
         </div>
       </el-col>
       <el-col :span="9">
@@ -75,14 +89,39 @@
   background: #FFF;
   color: black;
 }
+
+/*.el-carousel__item h3 {*/
+/*  color: #475669;*/
+/*  font-size: 14px;*/
+/*  opacity: 0.75;*/
+/*  line-height: 150px;*/
+/*  margin: 0;*/
+/*}*/
+
+/*.el-carousel__item:nth-child(2n) {*/
+/*  background-color: #99a9bf;*/
+/*}*/
+
+/*.el-carousel__item:nth-child(2n+1) {*/
+/*  background-color: #d3dce6;*/
+/*}*/
+
+
 </style>
 
 <script>
+// import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/swiper-bundle.css'
+
 export const strcut = (str) => {
       if(str.length >= 200) str = str.substring(0, 200) + "...";
       return str;
     }
 export default {
+  name: 'ImageCarousel',
+  // components: {
+  //   VueAwesomeSwiper
+  // },
     data(){
         return {
             transform: {
@@ -95,6 +134,23 @@ export default {
               id: "",
               user_name: "",
             },
+          gallery:[
+            {src: require('/src/assets/ImgRoll/resize/任脉穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/督脉穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手厥阴心包经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手太阳小肠经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手太阴肺经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手少阳三焦经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手少阴心经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/手阳明大肠经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足厥阴肝经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足太阳膀胱经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足太阴脾经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足少阳胆经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足少阴肾经穴.jpg')},
+            {src: require('@/assets/ImgRoll/resize/足阳明胃经穴.jpg')},
+
+          ]
         };
     },
 
@@ -103,6 +159,10 @@ export default {
     },
 
     methods: {
+      printItem(item,index) {
+        console.log(item);
+        console.log(index)
+      },
         async getData(mode){
           this.mode = mode
           this.$http.get('/home/HomeView', {
@@ -142,6 +202,7 @@ export default {
         }
     },
 }
+
 </script>
 
 
