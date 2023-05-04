@@ -64,8 +64,8 @@ def create_jiufa_graph():
 def create_bingzheng_graph():
     bingzheng_data = pd.read_excel(file_path, sheet_name="病症", header=0)
     bingzheng_array = np.array(bingzheng_data)
-    bingzheng_jiufa_xuewei_data = pd.read_excel(relation_file_path, sheet_name="Sheet1", header=0)
-    bingzheng_jiufa_xuewei_array = np.array(bingzheng_jiufa_xuewei_data)
+    # bingzheng_jiufa_xuewei_data = pd.read_excel(relation_file_path, sheet_name="Sheet1", header=0)
+    # bingzheng_jiufa_xuewei_array = np.array(bingzheng_jiufa_xuewei_data)
     for i in range(0, len(bingzheng_array)):
         node = Node('病症',
                     id=bingzheng_array[i][0],
@@ -79,38 +79,38 @@ def create_bingzheng_graph():
         category_of_disease = Relationship(node, '属于', relation)
         graph.create(category_of_disease)
 
-        jiufa_nodes = []
-        for j in range(0, len(bingzheng_jiufa_xuewei_array)):
-            if bingzheng_array[i][2] == bingzheng_jiufa_xuewei_array[j][0]:
-                jiufa_name = bingzheng_jiufa_xuewei_array[j][1]
-                jiufa_node = graph.nodes.match('灸法', name=jiufa_name).first()
-
-                if not jiufa_node:
-                    jiufa_node = Node('灸法', name=jiufa_name)
-                    jiufa_nodes.append(jiufa_node)
-                    graph.create(jiufa_node)
-
-                graph.merge(jiufa_node, '灸法', 'name')
-                print(jiufa_node.values())
-
-                xuewei_nodes = []
-                xuewei_name = bingzheng_jiufa_xuewei_array[j][2]  # assume xuewei node name is in the 4th column
-                xuewei_node = graph.nodes.match('穴位', name=xuewei_name).first()
-
-                if not xuewei_node:
-                    xuewei_node = Node('穴位', name=xuewei_name)
-                    xuewei_nodes.append(xuewei_node)
-                    graph.create(xuewei_node)
-
-                graph.merge(xuewei_node, '穴位', 'name')
-                print(xuewei_node.values())
-                relation_name = '治疗' + bingzheng_array[i][2]
-                jiufa_in_xuewei = Relationship(jiufa_node, relation_name, xuewei_node)
-                graph.create(jiufa_in_xuewei)
-
-                jiufa_to_bingzheng = Relationship(node, '可用灸法', jiufa_node)
-                # print(jiufa_to_bingzheng.values())
-                graph.create(jiufa_to_bingzheng)
+        # jiufa_nodes = []
+        # for j in range(0, len(bingzheng_jiufa_xuewei_array)):
+        #     if bingzheng_array[i][2] == bingzheng_jiufa_xuewei_array[j][0]:
+        #         jiufa_name = bingzheng_jiufa_xuewei_array[j][1]
+        #         jiufa_node = graph.nodes.match('灸法', name=jiufa_name).first()
+        #
+        #         if not jiufa_node:
+        #             jiufa_node = Node('灸法', name=jiufa_name)
+        #             jiufa_nodes.append(jiufa_node)
+        #             graph.create(jiufa_node)
+        #
+        #         graph.merge(jiufa_node, '灸法', 'name')
+        #         print(jiufa_node.values())
+        #
+        #         xuewei_nodes = []
+        #         xuewei_name = bingzheng_jiufa_xuewei_array[j][2]  # assume xuewei node name is in the 4th column
+        #         xuewei_node = graph.nodes.match('穴位', name=xuewei_name).first()
+        #
+        #         if not xuewei_node:
+        #             xuewei_node = Node('穴位', name=xuewei_name)
+        #             xuewei_nodes.append(xuewei_node)
+        #             graph.create(xuewei_node)
+        #
+        #         graph.merge(xuewei_node, '穴位', 'name')
+        #         print(xuewei_node.values())
+        #         relation_name = '治疗' + bingzheng_array[i][2]
+        #         jiufa_in_xuewei = Relationship(jiufa_node, relation_name, xuewei_node)
+        #         graph.create(jiufa_in_xuewei)
+        #
+        #         jiufa_to_bingzheng = Relationship(node, '可用灸法', jiufa_node)
+        #         # print(jiufa_to_bingzheng.values())
+        #         graph.create(jiufa_to_bingzheng)
 
 
 def create_disease_jiufa_xuewei_graph():
@@ -148,5 +148,5 @@ if __name__ == '__main__':
     create_xuewei_graph()
     create_jiufa_graph()
     create_bingzheng_graph()
-    # create_disease_jiufa_xuewei_graph()
+    create_disease_jiufa_xuewei_graph()
     print("create over")
