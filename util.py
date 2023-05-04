@@ -17,14 +17,27 @@ class Result:
         return jsonify(result)
 
     @staticmethod
-    def success_menu(data, menu):
+    def success_infor(data, relation):
+        result = {"code": "0", "message": "success"}
+        if isinstance(data, bytes):
+            result["data"] = str(data, 'utf-8')
+            result["relation"] = str(relation, 'utf-8')
+        else:
+            result["data"] = data
+            result["relation"] = relation
+        return jsonify(result)
+
+    @staticmethod
+    def success_menu(data, menu, relation):
         result = {"code": "0", "message": "success"}
         if isinstance(data, bytes):
             result["data"] = str(data, 'utf-8')
             result["menu"] = str(menu, 'utf-8')
+            result["relation"] = str(relation, 'utf-8')
         else:
             result["data"] = data
             result["menu"] = menu
+            result["relation"] = relation
         return jsonify(result)
 
     @staticmethod

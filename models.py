@@ -138,3 +138,11 @@ class Favorites(db.Model):
     category = db.Column(db.Integer, nullable=False, primary_key=True)
     data_id = db.Column(db.Integer, ForeignKey('thesis.thesis_id'), nullable=False, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey('user.user_id'), nullable=False, primary_key=True)
+
+
+class Relation(db.Model):
+    __tablename__ = "relation"
+    __table_args__ = {'extend_existing': True}
+    bingzheng = db.Column(db.String(20), nullable=False, primary_key=True)
+    jiufa = db.Column(db.String(20), nullable=False, primary_key=True)
+    xuewei = db.Column(db.String(20), nullable=False, primary_key=True)

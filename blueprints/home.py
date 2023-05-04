@@ -18,14 +18,58 @@ def find_Infor():
     menuReady = request.args.get('menuReady')
 
     alldata_dict = []
+    relation_dict = {
+                        "jiufa": [],
+                        "xuewei": [],
+                        "bingzheng": [],
+                    }
     if mode == 1:
         alldata = JiuFa.query.filter_by(id=data_id).first()
+        jiufa_name = alldata.mingcheng
+        query = Relation.query.filter_by(jiufa=jiufa_name).all()
+        # 将结果组装成字典
+        for row in query:
+            xuewei = row.xuewei + " "
+            bingzheng = row.bingzheng
+            if xuewei not in [x[1] for x in relation_dict["xuewei"]]:
+                main_infor = XueWei.query.filter_by(mingcheng=xuewei).first()
+                if main_infor:
+                    relation_dict["xuewei"].append([main_infor.id, main_infor.mingcheng])
+            if bingzheng not in [x[1] for x in relation_dict["bingzheng"]]:
+                main_infor = BingZheng.query.filter_by(mingcheng=bingzheng).first()
+                relation_dict["bingzheng"].append([main_infor.id, main_infor.mingcheng])
     elif mode == 2:
         alldata = BingZheng.query.filter_by(id=data_id).first()
+        # 查询 bingzheng 表获取 name
+        bingzheng_name = alldata.mingcheng
+        query = Relation.query.filter_by(bingzheng=bingzheng_name).all()
+        # 将结果组装成字典
+        for row in query:
+            xuewei = row.xuewei + " "
+            jiufa = row.jiufa
+            if xuewei not in [x[1] for x in relation_dict["xuewei"]]:
+                main_infor = XueWei.query.filter_by(mingcheng=xuewei).first()
+                if main_infor:
+                    relation_dict["xuewei"].append([main_infor.id, main_infor.mingcheng])
+            if jiufa not in [x[1] for x in relation_dict["jiufa"]]:
+                main_infor = JiuFa.query.filter_by(mingcheng=jiufa).first()
+                relation_dict["jiufa"].append([main_infor.id, main_infor.mingcheng])
     else:
         alldata = XueWei.query.filter_by(id=data_id).first()
-
+        xuewei_name = alldata.mingcheng.strip(" ")
+        query = Relation.query.filter_by(xuewei=xuewei_name).all()
+        # 将结果组装成字典
+        for row in query:
+            jiufa = row.jiufa
+            bingzheng = row.bingzheng
+            if jiufa not in [x[1] for x in relation_dict["jiufa"]]:
+                main_infor = JiuFa.query.filter_by(mingcheng=jiufa).first()
+                relation_dict["jiufa"].append([main_infor.id, main_infor.mingcheng])
+            if bingzheng not in [x[1] for x in relation_dict["bingzheng"]]:
+                main_infor = BingZheng.query.filter_by(mingcheng=bingzheng).first()
+                relation_dict["bingzheng"].append([main_infor.id, main_infor.mingcheng])
     alldata_dict.append(alldata.to_dict())
+
     # 打包左导航栏过去
     if menuReady == "false":
         menuList = {
@@ -56,9 +100,9 @@ def find_Infor():
         result = XueWei.query.all()
         for item in result:
             menuList["穴位"][item.leibie].append([item.id, 3, item.mingcheng])
-        return Result.success_menu(alldata_dict, menuList)
+        return Result.success_menu(alldata_dict, menuList, relation_dict)
 
-    return Result.success(alldata_dict)
+    return Result.success_infor(alldata_dict, relation_dict)
 
 
 @bp.route("/HomeView", methods=['GET'])
