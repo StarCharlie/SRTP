@@ -48,7 +48,7 @@
             <div style="background-color:bisque"><p><strong>主治：</strong>{{ data['zhuzhi']}}</p></div>
             <div style="background-color:aquamarine"><p><strong>方例：</strong>{{ data['fangli']}}</p></div>
             <div style="background-color:blanchedalmond"><p><strong>刺灸法：</strong>{{ data['cijiufa']}}</p></div>
-            <div style="background-color:goldenrod"><p><strong>其它：</strong>{{ data['qita']}}</p></div>
+            <!-- <div style="background-color:goldenrod"><p><strong>其它：</strong>{{ data['qita']}}</p></div> -->
           </div>
           <el-button type="warning" :icon="Star" @click="like(data['id'])" style="margin-left: 100px;" round>Like</el-button>
         </div>

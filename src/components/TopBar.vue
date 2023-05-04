@@ -30,7 +30,9 @@
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
-
+    <div class="centered">
+      <p class="project-info">部分项目数据来源——上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
+    </div>
     <div style="background:#EDEBEB;">
       <el-row :gutter="20">
           <!-- 图片部分 -->
@@ -39,10 +41,15 @@
               <img src="../assets/logo.png" class="image" >
             </div>
           </el-col>
-          <el-col :span="21">
+          <el-col :span="18">
             <div style="line-height: 60px;">
               <h2 style="text-align: left;">中医艾灸可视化知识服务平台</h2>
             </div>
+          </el-col>
+          <el-col :span="3">
+            <!-- <div style="height: 90px;">
+              <p>部分项目数据来源——上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
+            </div> -->
           </el-col>
         </el-row>
     </div>
@@ -60,7 +67,6 @@
       <el-menu-item index="/"> 主页 </el-menu-item>
       <el-menu-item index="/search"> 关键词搜索 </el-menu-item>
       <el-menu-item index="/graph"> 知识图谱 </el-menu-item>
-      <el-menu-item index="/statistics"> 3D人体查看 </el-menu-item>
     </el-menu>
   </template>
 
@@ -113,6 +119,21 @@
   }
   .flex-grow {
     flex-grow: 1;
+  }
+
+  .centered {
+    margin: auto;
+    height: 30px;
+    background-color: antiquewhite;
+    text-align: center;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center;
+  }
+
+  .project-info {
+    font-size: 8px;
+    color: #999;
   }
   </style>
   
