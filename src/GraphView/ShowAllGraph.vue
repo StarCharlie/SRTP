@@ -1,18 +1,20 @@
 <!-- Graph Data Demonstrate -->
-
 <template>
   <div style="height: 800px; background-color: lightblue;">
-    <div style="width:90%; height:100px; margin: auto;">
+    <div style="width:90%; height:100px; margin: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
       <el-input
         v-model="searchInput.word"
         class="w-50 m-2"
         size="large"
         placeholder="请输入"
-        style="width:200px; margin-top: 30px;"
+        style="width:200px;"
       />
-      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(1)">病症</el-button>
-      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(2)">灸法</el-button>
-      <el-button :icon="Search" style="margin-top: 30px; margin-left: 20px;" @click="searchWord(3)">穴位</el-button>
+      <div style="display: flex; align-items: center;">
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(1)">病症</el-button>
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(2)">灸法</el-button>
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(3)">穴位</el-button>
+      </div>
+      <el-slider v-model="searchInput.limit" style="width: 40%; margin-left: 20px;" step="10" show-input size="large"/>
     </div>
     <div ref="graph" style="width:90%; height: 600px; margin:auto; background-color:whitesmoke;"></div>
   </div>
@@ -31,7 +33,8 @@ export default {
   data() {
     return{
       searchInput: {
-        word: "普通感冒"
+        word: "普通感冒",
+        limit: 20
       },
       echartsData: [],
       nodesRelation: [],
@@ -50,15 +53,16 @@ export default {
 
     async searchWord(mode){
         var word = this.searchInput.word
+        var limit = this.searchInput.limit
         var query = ""
         if(mode === 1){
-          query = "MATCH p=(d:病症{name:'"+word+"'})-[:`可用灸法`]->(j:灸法)-[:`治疗"+word+"`]->(x:穴位), q=(d)-[:`属于`]->(l:类别) RETURN p, q"
+          query = "MATCH p=(d:病症{name:'"+word+"'})-[:`使用`]->(j:灸法)-[:`针对`]->(x:穴位) WHERE (x)-[:关联]->(d) MERGE q=(d)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
         else if(mode === 2){
-          query = "MATCH p=(j:灸法{name:'"+word+"'})-[:`属于`]->(l:类别) RETURN p"
+          query = "MATCH p=(j:灸法{name:'"+word+"'})-[:`针对`]->(x:穴位)-[:`关联`]->(b:`病症`) WHERE (b)-[:`使用`]->(j) MERGE q=(j)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
         else{
-          query = "MATCH p=(x:穴位{name:'"+word+"'})-[:`属于`]->(l:类别) RETURN p"
+          query = "MATCH p=(x:穴位{name:'"+word+"'})-[:`关联`]->(b:`病症`)-[:`使用`]->(j:`灸法`) WHERE (j)-[:`针对`]->(x) MERGE q=(x)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
         console.log(query)
         this.executeCypher(query);

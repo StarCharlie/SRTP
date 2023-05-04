@@ -7,7 +7,6 @@
 import TopBar from "./components/TopBar.vue";
 export default {
   name: "MyApp",
-  
   components: {
     TopBar,
   },
