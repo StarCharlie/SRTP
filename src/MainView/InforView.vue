@@ -26,7 +26,7 @@
       </el-col>
 
       <!-- 中间栏 -->
-      <el-col :span="16">
+      <el-col :span="15">
         <!-- 这里有一个dom提前渲染的问题，为了避免则先映入v-if，等数据传输到了再显示 -->
         <div v-if="this.dataTransformOver">
           <div v-if="this.mode == 1" class="layout">
@@ -55,7 +55,35 @@
       </el-col>
 
       <!-- 右边栏 -->
-      <el-col :span="4"></el-col>
+      <el-col :span="5">
+        <el-card class="box-card" style="margin-top: 20px; margin-right: 20px;">
+          <template #header>
+            <div class="card-header">
+              <span>相关链接</span>
+            </div>
+          </template>
+          <div>
+            <div>
+              <p>病症</p>
+              <div class="tag-group" v-for='item in relationList.bingzheng' :key="item[1]">
+                <el-tag class="ml-2" type="warning" @click="tagClick(item[0], 2)">{{item[1]}}</el-tag>
+              </div>
+            </div>
+            <div>
+              <p>灸法</p>
+              <div class="tag-group" v-for='item in relationList.jiufa' :key="item[1]">
+                <el-tag class="ml-2" type="info" @click="tagClick(item[0], 1)">{{item[1]}}</el-tag>
+              </div>
+            </div>
+            <div>
+              <p>穴位</p>
+              <div class="tag-group"  v-for='item in relationList.xuewei' :key="item[1]">
+                <el-tag class="ml-2" type="success" @click="tagClick(item[0], 3)">{{item[1]}}</el-tag>
+              </div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
   </el-row>
 </template>
 
@@ -76,6 +104,11 @@ export default {
         return {
             menuListReady: false,
             menuList: null,
+            relationList: {
+              bingzheng: "",
+              xuewei: "",
+              jiufa: "",
+            },
             dataTransformOver: false,
             data: null,
             mode: 1,
@@ -149,6 +182,9 @@ export default {
                 }
                 this.menuList =  JSON.parse(window.sessionStorage.getItem('menuList'))
                 this.data = res.data['data'][0];
+                this.relationList.xuewei = res.data['relation'].xuewei;
+                this.relationList.bingzheng = res.data['relation'].bingzheng;
+                this.relationList.jiufa = res.data['relation'].jiufa;
                 this.dataTransformOver = true;
             });
         },
@@ -161,20 +197,39 @@ export default {
               else alert(res.data['message']);
             });
         },
+        async tagClick(id, category){
+          this.mode = category;
+          this.$http.get('/home/InforView', {
+            params: {
+              'id': id,
+              'category': category,
+            }
+          }).then(res=>{
+            this.dataTransformOver = false
+            this.data = res.data['data'][0];
+            this.relationList.xuewei = res.data['relation'].xuewei;
+            this.relationList.bingzheng = res.data['relation'].bingzheng;
+            this.relationList.jiufa = res.data['relation'].jiufa;
+            this.dataTransformOver = true
+          })
+        },
         async handleNodeClick(data){
           // 只针对叶子节点
           if(data.id){
             this.mode = data.category;
-              this.$http.get('/home/InforView', {
-                params: {
-                  'id': data.id,
-                  'category': data.category,
-                }
-              }).then(res=>{
-                this.dataTransformOver = false
-                this.data = res.data['data'][0];
-                this.dataTransformOver = true
-              })
+            this.$http.get('/home/InforView', {
+              params: {
+                'id': data.id,
+                'category': data.category,
+              }
+            }).then(res=>{
+              this.dataTransformOver = false
+              this.data = res.data['data'][0];
+              this.relationList.xuewei = res.data['relation'].xuewei;
+              this.relationList.bingzheng = res.data['relation'].bingzheng;
+              this.relationList.jiufa = res.data['relation'].jiufa;
+              this.dataTransformOver = true
+            })
           }
         }
     },
@@ -237,5 +292,9 @@ body {
   color:dodgerblue;
   font-weight: bold;
 }
-
+.tag-group {
+  display: inline-block;
+  vertical-align: top;
+  margin: 5px;
+}
 </style>

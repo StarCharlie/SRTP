@@ -21,13 +21,13 @@
           <el-scrollbar style="height: 350px; width:100%">
             <div class="block" style="height: 100%">
               <div style="height:50px;text-align: center">
-                <el-row class="mb-4" style="margin-left: 42%;margin-top: 1%">
+                <el-row class="mb-4" style="margin-left: 42%; margin-top: 1%">
                   <h3>十四经络穴</h3>
                 </el-row>
               </div>
-              <el-carousel >
+              <el-carousel style="overflow: hidden;">
                 <el-carousel-item v-for="(item, index) in gallery" :key="index">
-                  <img :src="item.src" style="width:550px; height:230px;margin-top:1%; margin-left:35px;display: flex;justify-content: center;align-items: center;" >
+                  <img :src="item.src" style="width:550px; height:250px; margin-top:1%; margin:auto; display: flex;justify-content: center;align-items: center;" >
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -90,28 +90,10 @@
   color: black;
 }
 
-/*.el-carousel__item h3 {*/
-/*  color: #475669;*/
-/*  font-size: 14px;*/
-/*  opacity: 0.75;*/
-/*  line-height: 150px;*/
-/*  margin: 0;*/
-/*}*/
-
-/*.el-carousel__item:nth-child(2n) {*/
-/*  background-color: #99a9bf;*/
-/*}*/
-
-/*.el-carousel__item:nth-child(2n+1) {*/
-/*  background-color: #d3dce6;*/
-/*}*/
-
 
 </style>
 
 <script>
-// import VueAwesomeSwiper from 'vue-awesome-swiper'
-import 'swiper/swiper-bundle.css'
 
 export const strcut = (str) => {
       if(str.length >= 200) str = str.substring(0, 200) + "...";
