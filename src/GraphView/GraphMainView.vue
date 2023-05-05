@@ -10,12 +10,12 @@
             <router-link class="alink" to="/graph">
               <el-menu-item index="1-1"> 知识图谱 </el-menu-item>
             </router-link>
-            <router-link class="alink" to="/graph/QA">
+            <!-- <router-link class="alink" to="/graph/QA">
               <el-menu-item index="1-2"> AI医生 </el-menu-item>
             </router-link>
             <router-link class="alink" to="/graph/config">
               <el-menu-item index="1-3"> 设置 </el-menu-item>
-            </router-link>
+            </router-link> -->
           </el-menu-item-group>
         </el-menu>
       </el-aside>

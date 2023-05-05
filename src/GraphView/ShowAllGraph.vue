@@ -10,9 +10,9 @@
         style="width:200px;"
       />
       <div style="display: flex; align-items: center;">
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(1)">病症</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(2)">灸法</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(3)">穴位</el-button>
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('病症')">病症</el-button>
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('灸法')">灸法</el-button>
+        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('穴位')">穴位</el-button>
       </div>
       <el-slider v-model="searchInput.limit" style="width: 40%; margin-left: 20px;" step="10" show-input size="large"/>
     </div>
@@ -46,7 +46,7 @@ export default {
 
   mounted() {
     // 查询子句
-    this.searchWord(1)
+    this.searchWord("普通感冒")
   },
 
   methods:{
@@ -55,10 +55,10 @@ export default {
         var word = this.searchInput.word
         var limit = this.searchInput.limit
         var query = ""
-        if(mode === 1){
+        if(mode === "病症"){
           query = "MATCH p=(d:病症{name:'"+word+"'})-[:`使用`]->(j:灸法)-[:`针对`]->(x:穴位) WHERE (x)-[:关联]->(d) MERGE q=(d)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
-        else if(mode === 2){
+        else if(mode === "灸法"){
           query = "MATCH p=(j:灸法{name:'"+word+"'})-[:`针对`]->(x:穴位)-[:`关联`]->(b:`病症`) WHERE (b)-[:`使用`]->(j) MERGE q=(j)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
         else{
@@ -69,6 +69,7 @@ export default {
     },
 
     async executeCypher(query) {
+      let _this = this
       this.echartsNode = []  //节点数组
       this.nodesRelation = [] //关系线数组
       this.echartsData =  [],
@@ -228,6 +229,7 @@ export default {
         this.myChart = this.$echarts.init(this.$refs.graph);
         const chart = this.myChart;
         this.myChart.setOption(this.options);
+
         chart.on('mouseup', function (params) {
           var option = chart.getOption();
           option.series[0].data[params.dataIndex].x = params.event.offsetX;
@@ -235,20 +237,26 @@ export default {
           option.series[0].data[params.dataIndex].fixed = true;
           chart.setOption(option);
         });
-
+        chart.on('dblclick', function (params) {
+          var option = chart.getOption();
+          if (params.dataType === 'node') {
+            _this.searchInput.word = params.data.name;
+            _this.searchWord(params.data.category);
+          }
+          chart.setOption(option);
+        });
       }).catch(function (error) {
         console.log("Cypher 执行失败！", error);
         me.driver.close();
       });
-
       setTimeout(() => {
         this.knowlegGraphshow = true
        }, 4000);
     },
+
     closeLoading(status) {
       console.log('closeLoading', status);
     },
-
   }
 }
 </script>
