@@ -13,7 +13,7 @@
         </el-row>
       </div>
   </div>
-  <div style="height:500px; background-color:#D2DEDC">
+  <div style="height:100%; background-color:#D2DEDC">
     <el-row :gutter="20">
       <el-col :span="3"></el-col>
       <el-col :span="9">
@@ -46,13 +46,63 @@
           </div>
           <el-scrollbar style="height: 250px; margin: 20px;">
             <div v-for="item in this.data" :key="item" class="scrollbar-demo-item">
-              <p style="margin-left: 20px;" @click="toInfor(item['id'])">{{ item['mingcheng'] }}</p>
+              <p style="margin-left: 20px;" @click="toInfor(this.mode, item['id'])">{{ item['id'] + '. ' + item['mingcheng'] }}</p>
             </div>
           </el-scrollbar>
         </div>
       </el-col>
       <el-col :span="3"></el-col>
     </el-row>
+    <!-- 页面列表展开展示 -->
+    <div v-if="this.dataTransformOver" style="margin-top: 50px; width: 100%;">
+      <div style=" width: 80%;  margin: auto">
+        <div v-for="item in this.menuList" :key="item.label">
+          <!-- 一级标签 -->
+          <div style="text-align: center; background-color: gray; padding: 5px; margin: 20px">{{item.label}}</div>
+          <div v-for="subItem in item.children" :key="subItem.label" style="width: 100%;">
+            <!-- 二级标签 -->
+            <div style="margin: 5px;">
+              <el-row :gutter="20">
+                <el-col :span="4">
+                  <div style="text-align:center; background-color:bisque; margin: 5px; padding: 5px;">{{ subItem.label }}</div>
+                </el-col>
+                <el-col :span="20">
+                  <!-- 三级标签 -->
+                  <div class="tag-group" v-for="node in subItem.children" :key="node.label">
+                    <el-tag class="ml-2"
+                            :type="node.category === 1 ? 'info' : (node.category === 2 ? 'warning' : 'success')"
+                            @click="toInfor(node.category, node.id)">{{node.label}}</el-tag>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="demo-collapse">
+      <el-collapse>
+        <el-collapse-item v-for="item in this.menuList" :key="item.label" :title="item.label">
+          <div v-for="subItem in item.children" :key="subItem.label" style="width: 100%;">
+            <div style="margin: 5px;">
+              <el-row :gutter="20">
+                <el-col :span="4">
+                  <div style="text-align:center; background-color:bisque; margin: 5px; padding: 5px;">{{ subItem.label }}</div>
+                </el-col>
+                <el-col :span="20">
+                  <div class="tag-group" v-for="node in subItem.children" :key="node.label">
+                    <el-tag class="ml-2"
+                            :type="node.category === 1 ? 'info' : (node.category === 2 ? 'warning' : 'success')"
+                            @click="toInfor(node.category, node.id)">{{node.label}}</el-tag>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+    </div> -->
   </div>
 
 </template>
@@ -89,7 +139,11 @@
   background: #FFF;
   color: black;
 }
-
+.tag-group {
+  display: inline-block;
+  vertical-align: top;
+  margin: 5px;
+}
 
 </style>
 
@@ -101,9 +155,6 @@ export const strcut = (str) => {
     }
 export default {
   name: 'ImageCarousel',
-  // components: {
-  //   VueAwesomeSwiper
-  // },
     data(){
         return {
             transform: {
@@ -116,6 +167,8 @@ export default {
               id: "",
               user_name: "",
             },
+            dataTransformOver: false,
+            menuList: null,
           gallery:[
             {src: require('/src/assets/ImgRoll/resize/任脉穴.jpg')},
             {src: require('@/assets/ImgRoll/resize/督脉穴.jpg')},
@@ -141,24 +194,58 @@ export default {
     },
 
     methods: {
-      printItem(item,index) {
-        console.log(item);
-        console.log(index)
-      },
         async getData(mode){
           this.mode = mode
           this.$http.get('/home/HomeView', {
-            params: {'mode': this.mode}
+            params: {
+              'mode': this.mode,
+              'menuReady': (window.sessionStorage.getItem('menuList') != null),
+            }
           }).then(res=>{
               this.data = res.data['data'];
+              if(window.sessionStorage.getItem('menuList') == null){
+                var tempResult = res.data['menu'];
+                var tree = []
+                // 第一层，遍历三种名称
+                for(var key in tempResult){
+                    var leibie = []
+                    // 第二层，遍历类别
+                    for (var leibie_key in tempResult[key]){
+                      var node = []
+                      for (var node_key in tempResult[key][leibie_key][1]){
+                        node.push(
+                          {
+                            id: tempResult[key][leibie_key][1][node_key][0],
+                            category: tempResult[key][leibie_key][1][node_key][1],
+                            label: tempResult[key][leibie_key][1][node_key][2],
+                          }
+                        )
+                      }
+                      leibie.push(
+                        {
+                          label: tempResult[key][leibie_key][0],
+                          children: node
+                        }
+                      )
+                    }
+                    tree.push(
+                      { 
+                        label: key,
+                        children: leibie
+                      }
+                    )
+                }
+                window.sessionStorage.setItem("menuList", JSON.stringify(tree))
+              }
+              this.menuList = JSON.parse(window.sessionStorage.getItem('menuList'));
+              this.dataTransformOver = true;
           });
         },
-
-        async toInfor(id){
+        async toInfor(category, id){
           this.$router.push({
             path: '/Infor',
             query: {
-              category: this.mode,
+              category: category,
               id: id,
             }
           })
@@ -181,7 +268,7 @@ export default {
               if(res.data['message'] == "success") alert("收藏成功");
               else alert(res.data['message']);
             });
-        }
+        },
     },
 }
 

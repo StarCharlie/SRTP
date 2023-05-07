@@ -1,23 +1,52 @@
 <!-- Graph Data Demonstrate -->
 <template>
-  <div style="height: 800px; background-color: lightblue;">
-    <div style="width:90%; height:100px; margin: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
-      <el-input
-        v-model="searchInput.word"
-        class="w-50 m-2"
-        size="large"
-        placeholder="请输入"
-        style="width:200px;"
-      />
-      <div style="display: flex; align-items: center;">
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('病症')">病症</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('灸法')">灸法</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('穴位')">穴位</el-button>
-      </div>
-      <el-slider v-model="searchInput.limit" style="width: 40%; margin-left: 20px;" step="10" show-input size="large"/>
-    </div>
-    <div ref="graph" style="width:90%; height: 600px; margin:auto; background-color:whitesmoke;"></div>
-  </div>
+  <el-row :gutter="20">
+      <!-- 左边栏 -->
+      <el-col :span="4">
+        <div style="background-color: aliceblue;">
+          <div v-if="this.dataTransformOver" style="margin-top: 50px;">
+              <el-input
+                v-model="filterText"
+                style="width: 80%; margin-left: 20px;"
+                placeholder="输入关键词"
+              />
+              <el-tree
+                :data="menuList"
+                node-key="label"
+                :default-expanded-keys="word"
+                highlight-current
+                :props="defaultProps"
+                accordion
+                :current-node-key="word"
+                @node-click="handleNodeClick"
+                :filter-node-method="filterNode"
+                ref="tree"
+                style="width: 80%; margin-left: 20px; margin-top: 10px"
+              />
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="20">
+        <div style="height: 800px; background-color: lightblue;">
+          <div style="width:90%; height:100px; margin: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
+            <el-input
+              v-model="searchInput.word"
+              class="w-50 m-2"
+              size="large"
+              placeholder="请输入"
+              style="width:200px;"
+            />
+            <div style="display: flex; align-items: center;">
+              <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('病症')">病症</el-button>
+              <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('灸法')">灸法</el-button>
+              <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord('穴位')">穴位</el-button>
+            </div>
+            <el-slider v-model="searchInput.limit" style="width: 40%; margin-left: 20px;" step="10" show-input size="large"/>
+          </div>
+          <div ref="graph" style="width:90%; height: 600px; margin:auto; background-color:whitesmoke;"></div>
+        </div>
+      </el-col>
+  </el-row>
 </template>
 
 
@@ -36,6 +65,9 @@ export default {
         word: "普通感冒",
         limit: 20
       },
+      menuList: null,
+      filterText: "",
+      dataTransformOver: false,
       echartsData: [],
       nodesRelation: [],
       echartsNode: [],
@@ -46,11 +78,21 @@ export default {
 
   mounted() {
     // 查询子句
-    this.searchWord("普通感冒")
+    this.searchWord("病症")
+    this.menuList =  JSON.parse(window.sessionStorage.getItem('menuList'))
+    this.dataTransformOver = true;
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val.trim())
+    },
   },
 
   methods:{
-
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    },
     async searchWord(mode){
         var word = this.searchInput.word
         var limit = this.searchInput.limit
@@ -64,10 +106,15 @@ export default {
         else{
           query = "MATCH p=(x:穴位{name:'"+word+"'})-[:`关联`]->(b:`病症`)-[:`使用`]->(j:`灸法`) WHERE (j)-[:`针对`]->(x) MERGE q=(x)-[:`属于`]->(l:`类别`) RETURN q,p LIMIT " + limit
         }
-        console.log(query)
         this.executeCypher(query);
     },
-
+    async handleNodeClick(data){
+      if(data.category != null){
+        this.searchInput.word = data.label
+        var mode = data.category === 1 ? '灸法' : (data.category === 2 ? '病症' : '穴位');
+        this.searchWord(mode)
+      }
+    },
     async executeCypher(query) {
       let _this = this
       this.echartsNode = []  //节点数组
@@ -84,7 +131,9 @@ export default {
       session.run(query, {}).then((result) => {
         me.clearAll = false;
         me.records = result.records;
-        console.log(result.records)
+        if(result.records.length == 0){
+          alert("抱歉!该节点没有关联节点")
+        }
         // 开始处理数据
         for (let i = 0; i < me.records.length; i++) {
           var field_infor = me.records[i]._fields

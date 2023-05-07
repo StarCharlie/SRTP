@@ -28,6 +28,7 @@
       <!-- 中间栏 -->
       <el-col :span="15">
         <!-- 这里有一个dom提前渲染的问题，为了避免则先映入v-if，等数据传输到了再显示 -->
+
         <div v-if="this.dataTransformOver">
           <div v-if="this.mode == 1" class="layout">
             <h1 id="title">{{ data['mingcheng'] }}</h1>
@@ -44,9 +45,9 @@
             <h1 id="title">{{ data['mingcheng'] }}</h1>
             <div style="background-color:azure"><p><strong>位置：</strong>{{ data['weizhi']}}</p></div>
             <div style="background-color:indianred"><p><strong>类别：</strong>{{ data['leibie']}}</p></div>
-            <div style="background-color:beige"><p><strong>功效：</strong>{{ data['gongxiao']}}</p></div>
+            <div v-if="this.data['gongxiao']" style="background-color:beige"><p><strong>功效：</strong>{{ data['gongxiao']}}</p></div>
             <div style="background-color:bisque"><p><strong>主治：</strong>{{ data['zhuzhi']}}</p></div>
-            <div style="background-color:aquamarine"><p><strong>方例：</strong>{{ data['fangli']}}</p></div>
+            <div v-if="this.data['fangli']" style="background-color:aquamarine"><p><strong>方例：</strong>{{ data['fangli']}}</p></div>
             <div style="background-color:blanchedalmond"><p><strong>刺灸法：</strong>{{ data['cijiufa']}}</p></div>
             <!-- <div style="background-color:goldenrod"><p><strong>其它：</strong>{{ data['qita']}}</p></div> -->
           </div>
@@ -104,12 +105,12 @@ export default {
         return {
             menuListReady: false,
             menuList: null,
+            dataTransformOver: false,
             relationList: {
               bingzheng: "",
               xuewei: "",
               jiufa: "",
             },
-            dataTransformOver: false,
             data: null,
             mode: 1,
             tags: null,
@@ -142,44 +143,8 @@ export default {
               params: {
                 'id': this.$route.query.id,
                 'category': this.$route.query.category,
-                'menuReady': (window.sessionStorage.getItem('menuList') != null),
               }
             }).then(res=>{
-                // 首次查看左列表
-                if(window.sessionStorage.getItem('menuList') == null){
-                  var tempResult = res.data['menu'];
-                  var tree = []
-                  // 第一层，遍历三种名称
-                  for(var key in tempResult){
-                      var leibie = []
-                      // 第二层，遍历类别
-                      for (var leibie_key in tempResult[key]){
-                        var node = []
-                        for (var node_key in tempResult[key][leibie_key]){
-                          node.push(
-                            {
-                              id: tempResult[key][leibie_key][node_key][0],
-                              category: tempResult[key][leibie_key][node_key][1],
-                              label: tempResult[key][leibie_key][node_key][2],
-                            }
-                          )
-                        }
-                        leibie.push(
-                          {
-                            label: leibie_key,
-                            children: node
-                          }
-                        )
-                      }
-                      tree.push(
-                        { 
-                          label: key,
-                          children: leibie
-                        }
-                      )
-                  }
-                  window.sessionStorage.setItem("menuList", JSON.stringify(tree))
-                }
                 this.menuList =  JSON.parse(window.sessionStorage.getItem('menuList'))
                 this.data = res.data['data'][0];
                 this.relationList.xuewei = res.data['relation'].xuewei;

@@ -26,6 +26,11 @@ const routes = [
     name: "search",
     component: () => import("../MainView/SearchView.vue"),
   },
+  {
+    path: "/graph",
+    name: "graph",
+    component: () => import("../GraphView/ShowAllGraph.vue"),
+  },
   // 用户端
   {
     path: "/user",
@@ -51,29 +56,6 @@ const routes = [
         path: "myarticle",
         name: "myarticle",
         component: () => import("../UserView/MyArticle.vue"),
-      },
-    ],
-  },
-// 知识图谱端
-  {
-    path: "/graph",
-    name: "graph",
-    component: () => import("../GraphView/GraphMainView.vue"),
-    children: [
-      {
-        path: "",
-        name: "showAllGraph",
-        component: () => import("../GraphView/ShowAllGraph.vue"),
-      },
-      {
-        path: "QA",
-        name: "QA",
-        component: () => import("../GraphView/QAView.vue"),
-      },
-      {
-        path: "config",
-        name: "config",
-        component: () => import("../GraphView/ConfigView.vue"),
       },
     ],
   },
