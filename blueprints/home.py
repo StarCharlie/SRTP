@@ -1,11 +1,10 @@
 from flask import (Blueprint, request)
-from scapy.layers.dns import DNSRR
-from sqlalchemy import or_
-from scapy.all import *
+from sqlalchemy import asc
 
 from models import *
 from util import Result
 from es import ElasticSearch, create_es_data
+from sqlalchemy.sql import func, literal_column
 
 bp = Blueprint("home", __name__, url_prefix="/home")
 
@@ -15,7 +14,6 @@ bp = Blueprint("home", __name__, url_prefix="/home")
 def find_Infor():
     data_id = int(request.args.get('id'))
     mode = int(request.args.get('category'))
-    menuReady = request.args.get('menuReady')
 
     alldata_dict = []
     relation_dict = {
@@ -70,38 +68,6 @@ def find_Infor():
                 relation_dict["bingzheng"].append([main_infor.id, main_infor.mingcheng])
     alldata_dict.append(alldata.to_dict())
 
-    # 打包左导航栏过去
-    if menuReady == "false":
-        menuList = {
-                        "灸法": {},
-                        "穴位": {},
-                        "病症": {},
-                    }
-        # 灸法
-        result = JiuFa.query.with_entities(JiuFa.leibie).group_by("leibie").all()
-        for item in result:
-            menuList["灸法"].update({item.leibie: []})
-        result = JiuFa.query.all()
-        for item in result:
-            menuList["灸法"][item.leibie].append([item.id, 1, item.mingcheng])
-
-        # 病症
-        result = BingZheng.query.with_entities(BingZheng.leibie).group_by("leibie").all()
-        for item in result:
-            menuList["病症"].update({item.leibie: []})
-        result = BingZheng.query.all()
-        for item in result:
-            menuList["病症"][item.leibie].append([item.id, 2, item.mingcheng])
-
-        # 穴位
-        result = XueWei.query.with_entities(XueWei.leibie).group_by("leibie").all()
-        for item in result:
-            menuList["穴位"].update({item.leibie: []})
-        result = XueWei.query.all()
-        for item in result:
-            menuList["穴位"][item.leibie].append([item.id, 3, item.mingcheng])
-        return Result.success_menu(alldata_dict, menuList, relation_dict)
-
     return Result.success_infor(alldata_dict, relation_dict)
 
 
@@ -110,6 +76,7 @@ def home_load():
     # get请求，返回对应的所有条目
     if request.method == 'GET':
         mode = int(request.args.get('mode'))
+        menuReady = request.args.get('menuReady')
         alldata_dict = []
         if mode == 1:
             alldata = JiuFa.query.all()
@@ -120,6 +87,39 @@ def home_load():
         for single_data in alldata:
             alldata_dict.append({"id": single_data.id,
                                  "mingcheng": single_data.mingcheng})
+        if menuReady == "false":
+            menuList = {
+                "灸法": {},
+                "穴位": {},
+                "病症": {},
+            }
+            # 灸法
+            result = JiuFa.query.with_entities(JiuFa.leibie).group_by("leibie").all()
+            for item in result:
+                menuList["灸法"].update({item.leibie: []})
+            result = JiuFa.query.all()
+            for item in result:
+                menuList["灸法"][item.leibie].append([item.id, 1, item.mingcheng])
+            menuList["灸法"] = list(menuList["灸法"].items())
+
+            # 病症
+
+            result = BingZheng.query.with_entities(BingZheng.leibie).group_by(BingZheng.leibie).all()
+            for item in result:
+                menuList["病症"].update({item.leibie: []})
+            result = BingZheng.query.order_by(func.CONVERT(literal_column('mingcheng using gbk'))).all()
+            for item in result:
+                menuList["病症"][item.leibie].append([item.id, 2, item.mingcheng])
+            menuList["病症"] = list(menuList["病症"].items())
+            # 穴位
+            result = XueWei.query.with_entities(XueWei.leibie).group_by("leibie").all()
+            for item in result:
+                menuList["穴位"].update({item.leibie: []})
+            result = XueWei.query.all()
+            for item in result:
+                menuList["穴位"][item.leibie].append([item.id, 3, item.mingcheng])
+            menuList["穴位"] = list(menuList["穴位"].items())
+            return Result.success_menu(alldata_dict, menuList)
         return Result.success(alldata_dict)
 
     # post请求，用于处理用户收藏
