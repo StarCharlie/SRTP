@@ -132,12 +132,12 @@ class User(db.Model):
                 self.password = data['password']
 
 
-class Favorites(db.Model):
-    __tablename__ = "favorites"
+class Likes(db.Model):
+    __tablename__ = "likes"
     __table_args__ = {'extend_existing': True}
-    category = db.Column(db.Integer, nullable=False, primary_key=True)
-    data_id = db.Column(db.Integer, ForeignKey('thesis.thesis_id'), nullable=False, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('user.user_id'), nullable=False, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    infor_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    infor_category = db.Column(db.Integer, nullable=False, primary_key=True)
 
 
 class Relation(db.Model):

@@ -68,6 +68,31 @@ INSERT INTO `jiufa` VALUES (1,'艾炷着肤灸法','压灸','压灸，是指艾�
 UNLOCK TABLES;
 
 --
+-- Table structure for table `likes`
+--
+
+DROP TABLE IF EXISTS `likes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `likes` (
+  `user_id` int NOT NULL,
+  `infor_id` int NOT NULL,
+  `infor_category` int NOT NULL,
+  PRIMARY KEY (`user_id`,`infor_id`,`infor_category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `likes`
+--
+
+LOCK TABLES `likes` WRITE;
+/*!40000 ALTER TABLE `likes` DISABLE KEYS */;
+INSERT INTO `likes` VALUES (8,3,2),(8,4,2),(8,17,2),(8,34,1);
+/*!40000 ALTER TABLE `likes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `relation`
 --
 
@@ -107,7 +132,7 @@ CREATE TABLE `user` (
   `city` varchar(30) DEFAULT NULL,
   `motto` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,7 +141,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (8,'syt','Syt20010907','syt20010907@163.com',NULL,NULL);
+INSERT INTO `user` VALUES (8,'syt','Syt20010907','syt20010907@163.com',NULL,NULL),(9,'IEeya','syt20010907','1287472657@qq.com',NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,4 +184,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-04 17:37:43
+-- Dump completed on 2023-05-09  1:00:40

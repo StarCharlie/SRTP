@@ -71,7 +71,7 @@ def find_Infor():
     return Result.success_infor(alldata_dict, relation_dict)
 
 
-@bp.route("/HomeView", methods=['GET'])
+@bp.route("/HomeView", methods=['GET', 'POST'])
 def home_load():
     # get请求，返回对应的所有条目
     if request.method == 'GET':
@@ -127,23 +127,22 @@ def home_load():
         data = request.get_json()
         if not data:
             return Result.error(400, 'post 必须是json数据')
-        simple_id = data.get('id', None)
-        category = data.get('category', None)
-        user_name = data.get('user_name', None)
-        if user_name == -1:
+        user_id = int(data.get('user_id', None))
+        if user_id == -1:
             message = "用户未登录"
             return Result.error(400, message)
 
-        user_id = User.query.filter_by(user_name=user_name).first().user_id
+        infor_id = data.get('infor_id', None)
+        category = data.get('infor_category', None)
 
-        has_contain = Favorites.query.filter_by(data_id=simple_id, category=category, user_id=user_id).first()
+        has_contain = Likes.query.filter_by(user_id=user_id, infor_id=infor_id, infor_category=category).first()
 
         if has_contain:
             message = "该条目已收藏"
             return Result.error(400, message)
 
-        favor = Favorites(data_id=simple_id, category=category, user_id=user_id)
-        db.session.add(favor)
+        like_infor = Likes(user_id=user_id, infor_id=infor_id, infor_category=category)
+        db.session.add(like_infor)
         db.session.commit()
         return Result.success("OK")
 

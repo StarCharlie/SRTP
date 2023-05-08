@@ -20,7 +20,7 @@ def login_view():
         return Result.error(400, message)
     else:
         if query.password == password:
-            return Result.success("登陆成功!")
+            return Result.success(query.user_id)
         else:
             message = '密码错误,登陆失败!'
             return Result.error(400, message)
@@ -94,3 +94,51 @@ def user_password_data():
     user.password = password
     db.session.commit()
     return Result.success("OK")
+
+
+@bp.route("UserDislike", methods=['POST'])
+def user_dislike():
+    data = request.get_json()
+    if not data:
+        return Result.error(400, 'post 必须是json数据')
+    user_id = data.get('user_id', None)
+    infor_id = data.get('infor_id', None)
+    category = data.get('infor_category', None)
+    like_infor = Likes.query.filter_by(user_id=user_id, infor_id=infor_id, infor_category=category).first()
+    if not like_infor:
+        message = "信息不存在"
+        return Result.error(400, message)
+    db.session.delete(like_infor)
+    db.session.commit()
+    return Result.success("OK")
+
+
+@bp.route("UserLikeList", methods=['POST'])
+def user_like_list():
+    search_page = int(request.json.get('page_number')) - 1
+    page_size = int(request.json.get('page_size'))
+    user_id = int(request.json.get('user_id'))
+    start_index = search_page * page_size
+    page_info = Likes.query.filter_by(user_id=user_id).offset(start_index).limit(page_size).all()
+    address_list = []
+    count = 0
+    for item in page_info:
+        count += 1
+        if item.infor_category == 1:
+            query = JiuFa.query.filter_by(id=item.infor_id).first()
+            temp_item = [query.mingcheng, query.jieshao]
+        elif item.infor_category == 2:
+            query = BingZheng.query.filter_by(id=item.infor_id).first()
+            temp_item = [query.mingcheng, query.zhiliao]
+        else:
+            query = XueWei.query.filter_by(id=item.infor_id).first()
+            temp_item = [query.mingcheng, query.weizhi]
+        address_list.append(
+            {
+                "title": temp_item[0],
+                "infor": temp_item[1],
+                "id": item.infor_id,
+                "category": item.infor_category,
+            }
+        )
+    return Result.success_search(address_list, count)
