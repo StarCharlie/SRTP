@@ -53,6 +53,21 @@
           </div>
           <el-button type="warning" :icon="Star" @click="like(data['id'])" style="margin-left: 100px;" round>Like</el-button>
         </div>
+
+        <el-divider>
+          <el-icon><star-filled /></el-icon>
+        </el-divider>
+        <div style="height:800px; width: 90%; margin: auto">
+          <GraphInfor ref="igraph"></GraphInfor>
+        </div>
+        <el-divider>
+          <el-icon><star-filled /></el-icon>
+        </el-divider>
+        <div class="centered">
+          <p class="title-info">--数据来源--</p>
+          <p class="project-info">详情信息：上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
+          <p class="project-info">关系抽取：《实用常见病艾灸疗法》、《零基础学中医艾灸》、《艾灸穴位新解》、《简易针灸治疗法(艾灸篇)》</p>
+        </div>
       </el-col>
 
       <!-- 右边栏 -->
@@ -90,6 +105,7 @@
 
 <script setup>
   import {Star} from '@element-plus/icons-vue'
+  import { StarFilled } from '@element-plus/icons-vue'
 </script>
 
 
@@ -99,8 +115,12 @@ const defaultProps = {
   children: 'children',
   label: 'label',
 }
-
+import GraphInfor from "../GraphView/GraphInfor.vue"
 export default {
+    name: "GraphInfor",
+    components:{
+      GraphInfor,
+    },
     data(){
         return {
             menuListReady: false,
@@ -151,6 +171,10 @@ export default {
                 this.relationList.bingzheng = res.data['relation'].bingzheng;
                 this.relationList.jiufa = res.data['relation'].jiufa;
                 this.dataTransformOver = true;
+                this.$nextTick(() => {
+                  var modes = (this.$route.query.category == 1 ? '灸法' : (this.$route.query.category == 2 ? '病症' : '穴位'))
+                  this.$refs.igraph.searchWord(this.data['mingcheng'].replace(/\s/g,""), modes)
+                })
             });
         },
         async like(category, id){
@@ -194,6 +218,10 @@ export default {
               this.relationList.bingzheng = res.data['relation'].bingzheng;
               this.relationList.jiufa = res.data['relation'].jiufa;
               this.dataTransformOver = true
+              this.$nextTick(() => {
+                var modes = (data.category == 1 ? '灸法' : (data.category == 2 ? '病症' : '穴位'))
+                this.$refs.igraph.searchWord(this.data['mingcheng'].replace(/\s/g,""), modes)
+              })
             })
           }
         }
@@ -262,4 +290,18 @@ body {
   vertical-align: top;
   margin: 5px;
 }
+
+.centered {
+    margin: auto;
+    height: 30px;
+    text-align: center;
+  }
+  .project-info {
+    font-size: 8px;
+    color: #999;
+  }
+  .title-info{
+    font-size: 10px;
+    color:dimgray;
+  }
 </style>

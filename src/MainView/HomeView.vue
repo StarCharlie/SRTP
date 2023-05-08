@@ -80,31 +80,13 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="demo-collapse">
-      <el-collapse>
-        <el-collapse-item v-for="item in this.menuList" :key="item.label" :title="item.label">
-          <div v-for="subItem in item.children" :key="subItem.label" style="width: 100%;">
-            <div style="margin: 5px;">
-              <el-row :gutter="20">
-                <el-col :span="4">
-                  <div style="text-align:center; background-color:bisque; margin: 5px; padding: 5px;">{{ subItem.label }}</div>
-                </el-col>
-                <el-col :span="20">
-                  <div class="tag-group" v-for="node in subItem.children" :key="node.label">
-                    <el-tag class="ml-2"
-                            :type="node.category === 1 ? 'info' : (node.category === 2 ? 'warning' : 'success')"
-                            @click="toInfor(node.category, node.id)">{{node.label}}</el-tag>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </div> -->
   </div>
-
+  <el-divider>
+    <el-icon><star-filled /></el-icon>
+  </el-divider>
+  <div class="centered">
+    <p class="project-info">数据来源:上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
+  </div>
 </template>
 
 <style scoped>
@@ -144,6 +126,20 @@
   vertical-align: top;
   margin: 5px;
 }
+
+.centered {
+    margin: auto;
+    height: 30px;
+    text-align: center;
+  }
+  .project-info {
+    font-size: 8px;
+    color: #999;
+  }
+  .title-info{
+    font-size: 10px;
+    color:dimgray;
+  }
 
 </style>
 
@@ -277,4 +273,5 @@ export default {
 
 <script setup>
   import {Search} from '@element-plus/icons-vue'
+  import { StarFilled } from '@element-plus/icons-vue'
 </script>

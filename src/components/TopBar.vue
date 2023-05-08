@@ -30,9 +30,6 @@
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
-    <div class="centered">
-      <p class="project-info">部分项目数据来源——上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
-    </div>
     <div style="background:#EDEBEB;">
       <el-row :gutter="20">
           <!-- 图片部分 -->
@@ -45,11 +42,6 @@
             <div style="line-height: 60px;">
               <h2 style="text-align: left;">中医艾灸可视化知识服务平台</h2>
             </div>
-          </el-col>
-          <el-col :span="3">
-            <!-- <div style="height: 90px;">
-              <p>部分项目数据来源——上海市中医药文献馆,网址http://www.pharmnet.com.cn/tcm/jf/</p>
-            </div> -->
           </el-col>
         </el-row>
     </div>
@@ -105,8 +97,6 @@
     }
 </script>
 
-
-
 <style scoped>
   .menu-1 > {
     color: #789;
@@ -120,20 +110,5 @@
   .flex-grow {
     flex-grow: 1;
   }
-
-  .centered {
-    margin: auto;
-    height: 30px;
-    background-color: antiquewhite;
-    text-align: center;
-    display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: center;
-  }
-
-  .project-info {
-    font-size: 8px;
-    color: #999;
-  }
-  </style>
+</style>
   
