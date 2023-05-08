@@ -136,9 +136,9 @@ export default {
             tags: null,
             filterText: "",
             favor: {
-              category: "",
-              id: "",
-              user_name: "",
+              infor_category: "",
+              user_id: "",
+              infor_id: "",
             },
         };
     },
@@ -177,10 +177,10 @@ export default {
                 })
             });
         },
-        async like(category, id){
-            this.favor['user_name'] = (this.$cookies.get('name') == null) ? -1 : this.$cookies.get('name');
-            this.favor['category'] = category;
-            this.favor['id'] = id;
+        async like(id){
+            this.favor['user_id'] = (this.$cookies.get('id') == null) ? -1 : this.$cookies.get('id');
+            this.favor['infor_category'] = this.$route.query.category;
+            this.favor['infor_id'] = id;
             this.$http.post('/home/HomeView', this.favor).then(res=>{
               if(res.data['message'] == "success") alert("收藏成功");
               else alert(res.data['message']);
@@ -236,42 +236,6 @@ export default {
   background: #fff;
   text-align: left;
   line-height: 30px;
-}
-.relatedpaper{
-  position: static;
-  float: left;
-  margin: 0px;
-  padding: 5%;
-  background: #fff;
-}
-.paper {
-  position: static;
-  margin: 20px 0px;
-  width: auto;
-  background: #fff;
-  text-align: left;
-  line-height: 20px;
-}
-h2 {
-    text-align: left;
-    padding-left: 10px;
-}
-.paperdate {
-    font-size: x-small;
-}
-.paperabstract {
-    font-size: smaller;
-}
-.tag {
-    margin: 0px 10px;
-}
-body {
-  margin: 0px;
-  padding: 0;
-}
-#date, #author {
-    font-size: small;
-    color: grey;
 }
 
 /* 高光这里改 */

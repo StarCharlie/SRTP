@@ -5,27 +5,24 @@
         <el-menu default-active = "1-1">
           <el-submenu index="1">
             <el-menu-item-group>
-              <router-link class="alink" to="/main/">
+              <router-link class="alink" to="/user/">
                 <el-menu-item index="1-1"> 基本信息 </el-menu-item>
               </router-link>
 
-              <router-link class="alink" to="/main/infoeditor">
+              <router-link class="alink" to="/user/infoeditor">
                 <el-menu-item index="1-2"> 资料修改 </el-menu-item>
               </router-link>
 
-              <router-link class="alink" to="/main/accounteditor">
+              <router-link class="alink" to="/user/accounteditor">
                 <el-menu-item index="1-3"> 账户管理 </el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
 
           <el-submenu index="2">
-            <template v-slot:title>
-              <i class="el-icon-postcard"></i>论文管理</template
-            >
             <el-menu-item-group>
-              <router-link class="alink" to="/main/myarticle">
-                <el-menu-item index="2-1"> 论文收藏 </el-menu-item>
+              <router-link class="alink" to="/user/myarticle">
+                <el-menu-item index="2-1"> 条文收藏 </el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>

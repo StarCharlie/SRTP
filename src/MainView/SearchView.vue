@@ -96,9 +96,10 @@ import { Search } from '@element-plus/icons-vue'
         totalNumber: null,
         showResult: false,
         favor: {
-            id: "",
-            user_name: "",
-          },
+              infor_category: "",
+              user_id: "",
+              infor_id: "",
+            },
         }
     },
     created(){
@@ -131,13 +132,11 @@ import { Search } from '@element-plus/icons-vue'
             }
           })
         },
-        async toLink(link){
-          window.open(link, '_blank')
-        },
         async like(id){
-            this.favor['user_name'] = (this.$cookies.get('name') == null) ? -1 : this.$cookies.get('name');
-            this.favor['id'] = id;
-            this.$http.post('/HomeView', this.favor).then(res=>{
+            this.favor['user_id'] = (this.$cookies.get('id') == null) ? -1 : this.$cookies.get('id');
+            this.favor['infor_category'] = this.$route.query.category;
+            this.favor['infor_id'] = id;
+            this.$http.post('/home/HomeView', this.favor).then(res=>{
               if(res.data['message'] == "success") alert("收藏成功");
               else alert(res.data['message']);
             });

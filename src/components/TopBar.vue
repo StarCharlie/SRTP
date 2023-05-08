@@ -59,6 +59,7 @@
       <el-menu-item index="/"> 主页 </el-menu-item>
       <el-menu-item index="/search"> 关键词搜索 </el-menu-item>
       <el-menu-item index="/graph"> 知识图谱 </el-menu-item>
+      <el-menu-item v-if="this.$cookies.get('name') != null" index="/user"> 用户中心 </el-menu-item>
     </el-menu>
   </template>
 
@@ -68,8 +69,8 @@
     watch(
         () => router.currentRoute.value['name'],
         (oldValue, newValue) => {
-          if(oldValue == "mainHome" && newValue == "login"){
-            router.go(0);
+          if (oldValue === "mainHome" && ["showinfor", "login", "infoeditor", "accounteditor", "myarticle"].includes(newValue)) {
+             router.go(0);
           }
         }
     );
@@ -90,7 +91,8 @@
           if(this.$cookies.get('name') == null) this.$router.push("/register");
           else{
             this.$cookies.remove("name");
-            this.$router.go(0);
+            this.$cookies.remove("id");
+            this.$router.push("/");
           }
         },
       }

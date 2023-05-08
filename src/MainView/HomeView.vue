@@ -158,11 +158,6 @@ export default {
             },
             mode: 1,
             data: null,
-            favor: {
-              category: "",
-              id: "",
-              user_name: "",
-            },
             dataTransformOver: false,
             menuList: null,
           gallery:[
@@ -254,16 +249,6 @@ export default {
               word: this.transform.word
             }
           })
-        },
-
-        async like(category, id){
-            this.favor['user_name'] = (this.$cookies.get('name') == null) ? -1 : this.$cookies.get('name');
-            this.favor['category'] = category;
-            this.favor['id'] = id;
-            this.$http.post('/home/HomeView', this.favor).then(res=>{
-              if(res.data['message'] == "success") alert("收藏成功");
-              else alert(res.data['message']);
-            });
         },
     },
 }

@@ -47,7 +47,7 @@ export default {
   },
   methods: {
       async getInfor(){
-          this.$http.get('/UserView', {
+          this.$http.get('/user/UserView', {
               params: {'user_name': this.$cookies.get('name')}
             }).then(res=>{
               this.data = res.data['data'];
