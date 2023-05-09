@@ -23,11 +23,11 @@
       </el-row>
     </div>
   </div>
-  <div style="height:100%; background-color:#D2DEDC">
+  <div style="height:100%; background-color:#D2DEDC;">
     <el-row :gutter="20">
       <el-col :span="3"></el-col>
       <el-col :span="9">
-        <div class="radius" >
+        <div class="radius" style="width: 600px" >
           <el-scrollbar style="height: 350px; width:100%">
             <div class="block" style="height: 100%">
               <div style="height:50px;text-align: center">
@@ -35,9 +35,9 @@
                   <h3>十四经络穴</h3>
                 </el-row>
               </div>
-              <el-carousel style="overflow: hidden;">
-                <el-carousel-item v-for="(item, index) in gallery" :key="index">
-                  <img :src="item.src" style="width:550px; height:250px; margin-top:1%; margin:auto; display: flex;justify-content: center;align-items: center;" >
+              <el-carousel >
+                <el-carousel-item v-for="(item, index) in gallery" :key="index" style="overflow: visible;">
+                  <img :src="item.src" class="carousel-img" >
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -131,6 +131,13 @@
   background: #FFF;
   color: black;
 }
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .tag-group {
   display: inline-block;
   vertical-align: top;
@@ -172,20 +179,20 @@ export default {
             dataTransformOver: false,
             menuList: null,
           gallery:[
-            {src: require('/src/assets/ImgRoll/resize/任脉穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/督脉穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手厥阴心包经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手太阳小肠经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手太阴肺经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手少阳三焦经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手少阴心经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/手阳明大肠经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足厥阴肝经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足太阳膀胱经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足太阴脾经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足少阳胆经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足少阴肾经穴.jpg')},
-            {src: require('@/assets/ImgRoll/resize/足阳明胃经穴.jpg')},
+            {src: require('/src/assets/ImgRoll/original/任脉穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/督脉穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手厥阴心包经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手太阳小肠经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手太阴肺经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手少阳三焦经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手少阴心经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/手阳明大肠经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足厥阴肝经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足太阳膀胱经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足太阴脾经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足少阳胆经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足少阴肾经穴.jpg')},
+            {src: require('@/assets/ImgRoll/original/足阳明胃经穴.jpg')},
 
           ]
         };
