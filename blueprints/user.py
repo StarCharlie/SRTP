@@ -1,7 +1,7 @@
 # 用户界面
 from flask import Blueprint, request
-from models import *
-from util import Result
+from configs.models import *
+from configs.util import Result
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 

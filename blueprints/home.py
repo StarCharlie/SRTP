@@ -1,8 +1,8 @@
 from flask import (Blueprint, request)
 
-from models import *
-from util import Result
-from es import ElasticSearch, create_es_data
+from configs.models import *
+from configs.util import Result
+from configs.es import ElasticSearch, create_es_data
 from sqlalchemy.sql import func, literal_column
 
 bp = Blueprint("home", __name__, url_prefix="/home")

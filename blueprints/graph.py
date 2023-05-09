@@ -2,8 +2,8 @@
 # @Author: IEeya
 from flask import (Blueprint, request)
 
-from models import *
-from util import Result
+from configs.models import *
+from configs.util import Result
 
 bp = Blueprint("graph", __name__, url_prefix="/graph")
 

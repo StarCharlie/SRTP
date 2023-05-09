@@ -1,7 +1,7 @@
 from flask import Flask
 from blueprints import user_bp, home_bp, graph_bp
-import config
-from extension import db
+from configs import config
+from configs.extension import db
 from flask_cors import *
 
 
