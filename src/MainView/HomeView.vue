@@ -56,7 +56,7 @@
           </div>
           <el-scrollbar style="height: 250px; margin: 20px;">
             <div v-for="item in this.data" :key="item" class="scrollbar-demo-item">
-              <p style="margin-left: 20px;" @click="toInfor(this.mode, item['id'])">{{ item['id'] + '. ' + item['mingcheng'] }}</p>
+              <p style="margin-left: 20px;" @click="toInfor(this.mode, item['id'])">{{ item['mingcheng'] }}</p>
             </div>
           </el-scrollbar>
         </div>
