@@ -15,7 +15,7 @@
 
 
 from elasticsearch import Elasticsearch
-from models import XueWei, BingZheng, JiuFa
+from configs.models import XueWei, BingZheng, JiuFa
 
 
 class ElasticSearch:

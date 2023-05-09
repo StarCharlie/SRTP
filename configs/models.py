@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey
 
-from extension import db
+from configs.extension import db
 # 存储所有模型
 
 
