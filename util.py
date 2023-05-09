@@ -28,14 +28,27 @@ class Result:
         return jsonify(result)
 
     @staticmethod
-    def success_menu(data, menu):
+    def success_menu(data, menu, like):
         result = {"code": "0", "message": "success"}
         if isinstance(data, bytes):
             result["data"] = str(data, 'utf-8')
             result["menu"] = str(menu, 'utf-8')
+            result["like"] = str(like, 'utf-8')
         else:
             result["data"] = data
             result["menu"] = menu
+            result["like"] = like
+        return jsonify(result)
+
+    @staticmethod
+    def success_home(data, like):
+        result = {"code": "0", "message": "success"}
+        if isinstance(data, bytes):
+            result["data"] = str(data, 'utf-8')
+            result["like"] = str(like, 'utf-8')
+        else:
+            result["data"] = data
+            result["like"] = like
         return jsonify(result)
 
     @staticmethod

@@ -119,11 +119,10 @@ def user_like_list():
     page_size = int(request.json.get('page_size'))
     user_id = int(request.json.get('user_id'))
     start_index = search_page * page_size
+    count = Likes.query.filter_by(user_id=user_id).count()
     page_info = Likes.query.filter_by(user_id=user_id).offset(start_index).limit(page_size).all()
     address_list = []
-    count = 0
     for item in page_info:
-        count += 1
         if item.infor_category == 1:
             query = JiuFa.query.filter_by(id=item.infor_id).first()
             temp_item = [query.mingcheng, query.jieshao]

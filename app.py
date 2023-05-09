@@ -1,5 +1,5 @@
 from flask import Flask
-from blueprints import user_bp, home_bp
+from blueprints import user_bp, home_bp, graph_bp
 import config
 from extension import db
 from flask_cors import *
@@ -14,6 +14,7 @@ db.init_app(app)
 
 app.register_blueprint(home_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(graph_bp)
 
 
 @app.route("/")

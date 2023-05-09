@@ -1,5 +1,4 @@
 from flask import (Blueprint, request)
-from sqlalchemy import asc
 
 from models import *
 from util import Result
@@ -27,7 +26,7 @@ def find_Infor():
         query = Relation.query.filter_by(jiufa=jiufa_name).all()
         # 将结果组装成字典
         for row in query:
-            xuewei = row.xuewei + " "
+            xuewei = row.xuewei
             bingzheng = row.bingzheng
             if xuewei not in [x[1] for x in relation_dict["xuewei"]]:
                 main_infor = XueWei.query.filter_by(mingcheng=xuewei).first()
@@ -43,7 +42,7 @@ def find_Infor():
         query = Relation.query.filter_by(bingzheng=bingzheng_name).all()
         # 将结果组装成字典
         for row in query:
-            xuewei = row.xuewei + " "
+            xuewei = row.xuewei
             jiufa = row.jiufa
             if xuewei not in [x[1] for x in relation_dict["xuewei"]]:
                 main_infor = XueWei.query.filter_by(mingcheng=xuewei).first()
@@ -54,7 +53,7 @@ def find_Infor():
                 relation_dict["jiufa"].append([main_infor.id, main_infor.mingcheng])
     else:
         alldata = XueWei.query.filter_by(id=data_id).first()
-        xuewei_name = alldata.mingcheng.strip(" ")
+        xuewei_name = alldata.mingcheng
         query = Relation.query.filter_by(xuewei=xuewei_name).all()
         # 将结果组装成字典
         for row in query:
@@ -87,6 +86,28 @@ def home_load():
         for single_data in alldata:
             alldata_dict.append({"id": single_data.id,
                                  "mingcheng": single_data.mingcheng})
+        # 返回最喜欢的前十个条文
+        most_like_query = Likes.query.with_entities(
+                Likes.infor_id,
+                Likes.infor_category,
+                func.count(Likes.user_id).label('like_count')
+            ).group_by(
+                Likes.infor_id,
+                Likes.infor_category
+            ).order_by(
+                func.count(Likes.user_id).desc()
+            ).limit(10).all()
+        most_like_result = []
+        for item in most_like_query:
+            if item.infor_category == 1:
+                most_like_result.append([JiuFa.query.filter_by(id=item.infor_id).first().mingcheng,
+                                         item.infor_id, item.infor_category])
+            elif item.infor_category == 2:
+                most_like_result.append([BingZheng.query.filter_by(id=item.infor_id).first().mingcheng,
+                                         item.infor_id, item.infor_category])
+            else:
+                most_like_result.append([XueWei.query.filter_by(id=item.infor_id).first().mingcheng,
+                                         item.infor_id, item.infor_category])
         if menuReady == "false":
             menuList = {
                 "灸法": {},
@@ -119,8 +140,8 @@ def home_load():
             for item in result:
                 menuList["穴位"][item.leibie].append([item.id, 3, item.mingcheng])
             menuList["穴位"] = list(menuList["穴位"].items())
-            return Result.success_menu(alldata_dict, menuList)
-        return Result.success(alldata_dict)
+            return Result.success_menu(alldata_dict, menuList, most_like_result)
+        return Result.success_home(alldata_dict, most_like_result)
 
     # post请求，用于处理用户收藏
     else:
@@ -136,7 +157,6 @@ def home_load():
         category = data.get('infor_category', None)
 
         has_contain = Likes.query.filter_by(user_id=user_id, infor_id=infor_id, infor_category=category).first()
-
         if has_contain:
             message = "该条目已收藏"
             return Result.error(400, message)
