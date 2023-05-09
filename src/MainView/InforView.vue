@@ -186,7 +186,7 @@ export default {
         },
         async like(id){
             this.favor['user_id'] = (this.$cookies.get('id') == null) ? -1 : this.$cookies.get('id');
-            this.favor['infor_category'] = this.$route.query.category;
+            this.favor['infor_category'] = this.mode;
             this.favor['infor_id'] = id;
             this.$http.post('/home/HomeView', this.favor).then(res=>{
               if(res.data['message'] == "success"){

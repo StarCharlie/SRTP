@@ -88,7 +88,6 @@ export default {
       },
       getInfor(){
         this.$http.post('/user/UserLikeList', this.transform).then(res=>{
-          console.log(1)
               this.data = res.data['data'];
               this.total = res.data['totalNumber'];
           });
