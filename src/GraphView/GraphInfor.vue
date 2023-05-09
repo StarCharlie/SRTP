@@ -1,5 +1,4 @@
 <template>
-  <el-alert v-if="this.nofindData" title="抱歉,未找到匹配关系" type="error" center show-icon />
   <div style="height: 100%; background-color: lightblue;">
     <div style="width:90%; height:80px; margin: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
       <el-input
@@ -10,23 +9,29 @@
         style="width:200px;"
       />
       <div style="display: flex; align-items: center;">
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '病症')">病症</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '灸法')">灸法</el-button>
-        <el-button :icon="Search" style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '穴位')">穴位</el-button>
+        <el-button style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '病症')">病症</el-button>
+        <el-button style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '灸法')">灸法</el-button>
+        <el-button style="margin-left: 20px;" @click="searchWord(this.searchInput.word, '穴位')">穴位</el-button>
       </div>
       <el-slider v-model="searchInput.limit" style="width: 40%; margin-left: 20px;" step="10" show-input size="large"/>
     </div>
     <div ref="graph" style="width:90%; height: 80%; margin:auto; background-color:whitesmoke;"></div>
+    <div style="text-align: center; margin-top: 10px">
+      <el-button type="warning" plain @click="toInfor(searchInput.word, searchInput.mode)">查看中心节点详情</el-button>
+      <p style="font-size: 12px; color: #999; margin: 10px">图谱查阅指南：输入查阅信息，点击相应的类别按钮进行查询，拖动滑块限制查询返回数目，鼠标移动到节点上方查看邻居关系，双击节点跳转</p>
+    </div>
   </div>
 </template>
 
 <script>
+import { ElMessage } from 'element-plus'
 var neo4j = require("neo4j-driver");
 export default {
   data() {
     return{
       searchInput: {
         word: "普通感冒",
+        mode: "病症",
         limit: 20
       },
       echartsData: [],
@@ -34,7 +39,6 @@ export default {
       echartsNode: [],
       myChart: '',
       options: {},
-      nofindData: false,
     }
   },
 
@@ -45,7 +49,7 @@ export default {
     async searchWord(name, mode){
         var word = name
         this.searchInput.word = name
-        console.log(name, mode)
+        this.searchInput.mode = mode
         var limit = this.searchInput.limit
         var query = ""
         if(mode === "病症"){
@@ -67,6 +71,26 @@ export default {
         this.searchWord(this.searchInput.word, mode)
       }
     },
+    
+    async toInfor(name, mode){
+      this.$http.post('/graph/GetInfor', {name: name, category: mode}).then(res=>{
+        if(res.data['message'] == "success"){
+          this.$router.push({
+            path: '/Infor',
+            query: {
+              category: res.data['data'].category,
+              id: res.data['data'].id,
+            }
+          })
+        }
+        else{
+          ElMessage({
+            message: res.data['message'],
+            type: 'error',
+          })
+        }
+      });
+    },
 
     async executeCypher(query) {
       let _this = this
@@ -85,7 +109,10 @@ export default {
         me.clearAll = false;
         me.records = result.records;
         if(result.records.length == 0){
-          this.nofindData = true;
+          ElMessage({
+            message: '抱歉,未找到连接关系',
+            type: 'error',
+          })
         }
         // 开始处理数据
         for (let i = 0; i < me.records.length; i++) {
@@ -241,7 +268,7 @@ export default {
         });
         chart.on('dblclick', function (params) {
           var option = chart.getOption();
-          if (params.dataType === 'node') {
+          if (params.dataType === 'node' && params.data.category !== '类别') {
             _this.searchInput.word = params.data.name;
             _this.searchWord(params.data.name, params.data.category);
           }

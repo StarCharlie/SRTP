@@ -50,7 +50,6 @@
                   layout="total, sizes, prev, pager, next, jumper"
                   :total="totalNumber">
                 </el-pagination>
-
               </div>
         </el-col>
         <el-col :span="2"></el-col>

@@ -40,32 +40,19 @@
                   :page-sizes="[5, 10, 15, 20]"
                   v-model:page-size="transform.page_size"
                   layout="total, sizes, prev, pager, next, jumper"
-                  :total="totalNumber">
+                  :total="total">
                 </el-pagination>
-
               </div>
         </el-col>
         <el-col :span="2"></el-col>
       </el-row>
-    </div>
-    <br />
-    <div class="footer" style="margin: 0 auto; width: 100%">
-      <div class="block">
-        <el-pagination
-          background
-          layout="total, prev, pager, next, jumper"
-          :total="total"
-        >
-        </el-pagination>
-      </div>
     </div>
   </div>
 </template>
 
 
 <script>
-
-
+import { ElMessage } from 'element-plus'
 export default {
   data() {
     return {
@@ -99,8 +86,9 @@ export default {
           if(str.length >= 80) str = str.substring(0, 80) + "...";
           return str
       },
-      async getInfor(){
+      getInfor(){
         this.$http.post('/user/UserLikeList', this.transform).then(res=>{
+          console.log(1)
               this.data = res.data['data'];
               this.total = res.data['totalNumber'];
           });
@@ -111,10 +99,18 @@ export default {
             this.favor['infor_category'] = category;
             this.$http.post('/user/UserDislike', this.favor).then(res=>{
               if(res.data['message'] == "success"){
-                alert("取消收藏成功");
+                ElMessage({
+                  message: '取消收藏成功',
+                  type: 'success',
+                })
                 this.$router.go(0)
               }
-              else alert(res.data['message']);
+              else{
+                ElMessage({
+                  message: res.data['message'],
+                  type: 'error',
+                })
+              }
             });
         },
         async toInfor(id, category){

@@ -116,6 +116,7 @@ const defaultProps = {
   label: 'label',
 }
 import GraphInfor from "../GraphView/GraphInfor.vue"
+import { ElMessage } from 'element-plus'
 export default {
     name: "GraphInfor",
     components:{
@@ -148,6 +149,12 @@ export default {
         this.getInfor();
     },
     watch: {
+      $route: {
+        handler() {
+          this.$router.go(0)
+        },
+        deep: true,
+      },
       filterText(val) {
         this.$refs.tree.filter(val.trim())
       },
@@ -182,8 +189,18 @@ export default {
             this.favor['infor_category'] = this.$route.query.category;
             this.favor['infor_id'] = id;
             this.$http.post('/home/HomeView', this.favor).then(res=>{
-              if(res.data['message'] == "success") alert("收藏成功");
-              else alert(res.data['message']);
+              if(res.data['message'] == "success"){
+                ElMessage({
+                  message: '收藏条目成功',
+                  type: 'success',
+                })
+              }
+              else{
+                ElMessage({
+                  message: res.data['message'],
+                  type: 'error',
+                })
+              }
             });
         },
         async tagClick(id, category){

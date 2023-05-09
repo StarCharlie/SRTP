@@ -1,17 +1,27 @@
 <template>
-  <div style="width: 100%;height: 120px;">
-      <div style="line-height: 120px;text-align: center;margin:auto;">
-        <el-row :gutter="20">
-          <el-col :span="16" :offset="4">
-            <el-input v-model="transform.word" placeholder="请输入查询关键词">
-                <template #append>
-                    <el-button style="margin-left: -20px; margin-top: 0px; height: 60px;width: 70px; font-size: 40px;" @click="search" :icon="Search" round/>
-                </template>
-            </el-input>
-          </el-col>
-          <el-col :span="4"></el-col>
-        </el-row>
+  <div style="width: 100%;height: 160px; text-align: center;">
+    <div style="display: flex; align-items: center; justify-content: center; 
+    height:50px; width: 80%; margin: auto; margin-top: 20px; margin-bottom: 20px; padding: 5px; background-color:aliceblue;">
+      <p style="margin: 10px;">最近热搜词条: </p>
+      <div class="tag-group" v-for="node in this.likeList" :key="node.label">
+        <el-tag style="margin-left: 20px"
+                :type="node[2] === 1 ? 'info' : (node[2]=== 2 ? 'warning' : 'success')"
+                @click="toInfor(node[2], node[1])">{{node[0]}}
+        </el-tag>
       </div>
+    </div>
+    <div style="text-align: center; margin:auto;">
+      <el-row :gutter="20">
+        <el-col :span="16" :offset="4">
+          <el-input v-model="transform.word" placeholder="请输入查询关键词">
+              <template #append>
+                  <el-button style="margin-left: -20px; margin-top: 0px; height: 60px;width: 70px; font-size: 40px;" @click="search" :icon="Search" round/>
+              </template>
+          </el-input>
+        </el-col>
+        <el-col :span="4"></el-col>
+      </el-row>
+    </div>
   </div>
   <div style="height:100%; background-color:#D2DEDC">
     <el-row :gutter="20">
@@ -158,6 +168,7 @@ export default {
             },
             mode: 1,
             data: null,
+            likeList: null,
             dataTransformOver: false,
             menuList: null,
           gallery:[
@@ -194,6 +205,7 @@ export default {
             }
           }).then(res=>{
               this.data = res.data['data'];
+              this.likeList = res.data['like'];
               if(window.sessionStorage.getItem('menuList') == null){
                 var tempResult = res.data['menu'];
                 var tree = []

@@ -69,7 +69,8 @@
     watch(
         () => router.currentRoute.value['name'],
         (oldValue, newValue) => {
-          if (oldValue === "mainHome" && ["showinfor", "login", "infoeditor", "accounteditor", "myarticle"].includes(newValue)) {
+          // if (oldValue === "mainHome" && ["showinfor", "login", "infoeditor", "accounteditor", "myarticle"].includes(newValue)) {
+          if (oldValue === "mainHome" && ["login"].includes(newValue)) {
              router.go(0);
           }
         }
