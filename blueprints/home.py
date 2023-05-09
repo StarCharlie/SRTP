@@ -78,11 +78,11 @@ def home_load():
         menuReady = request.args.get('menuReady')
         alldata_dict = []
         if mode == 1:
-            alldata = JiuFa.query.all()
+            alldata = JiuFa.query.order_by(func.CONVERT(literal_column('mingcheng using gbk'))).all()
         elif mode == 2:
-            alldata = BingZheng.query.all()
+            alldata = BingZheng.query.order_by(func.CONVERT(literal_column('mingcheng using gbk'))).all()
         else:
-            alldata = XueWei.query.all()
+            alldata = XueWei.query.order_by(func.CONVERT(literal_column('mingcheng using gbk'))).all()
         for single_data in alldata:
             alldata_dict.append({"id": single_data.id,
                                  "mingcheng": single_data.mingcheng})
