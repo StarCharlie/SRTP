@@ -217,6 +217,10 @@ export default {
             this.relationList.bingzheng = res.data['relation'].bingzheng;
             this.relationList.jiufa = res.data['relation'].jiufa;
             this.dataTransformOver = true
+            this.$nextTick(() => {
+              var modes = (category == 1 ? '灸法' : (category == 2 ? '病症' : '穴位'))
+              this.$refs.igraph.searchWord(this.data['mingcheng'].replace(/\s/g,""), modes)
+            })
           })
         },
         async handleNodeClick(data){
